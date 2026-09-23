@@ -1,0 +1,1678 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>نظام تحليل نتائج الطلاب</title>
+<script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;font-family:'Cairo',sans-serif;margin:0;padding:0}
+:root{--p:#1e3a8a;--pl:#3b82f6;--s:#10b981;--d:#ef4444;--w:#f59e0b;--g:#64748b}
+body{background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);min-height:100vh;padding:20px;color:#0f172a}
+.container{max-width:1500px;margin:0 auto}
+.header{background:rgba(255,255,255,.98);border-radius:24px;padding:25px 35px;margin-bottom:20px;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.header h1{font-size:1.9rem;font-weight:900;background:linear-gradient(135deg,var(--p),var(--pl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.header p{color:var(--g);font-size:1rem}
+.toolbar{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px;margin-bottom:20px}
+.btn{border:none;padding:15px 18px;border-radius:16px;font-size:.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .3s;box-shadow:0 10px 25px rgba(0,0,0,.15);color:#fff;font-family:'Cairo',sans-serif}
+.btn:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(0,0,0,.25)}
+.btn.active{outline:3px solid #fff;outline-offset:3px}
+.btn-upload{background:linear-gradient(135deg,#10b981,#059669)}
+.btn-avg{background:linear-gradient(135deg,#3b82f6,#1e40af)}
+.btn-weak{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.btn-student{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}
+.btn-needs{background:linear-gradient(135deg,#f59e0b,#d97706)}
+.btn-plan{background:linear-gradient(135deg,#06b6d4,#0891b2)}
+.btn-icon{font-size:1.3rem}
+.status-banner{background:rgba(255,255,255,.98);border-right:6px solid var(--s);padding:15px 22px;border-radius:16px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);font-weight:600;display:flex;align-items:flex-start;gap:10px;white-space:pre-line}
+.status-banner.error{border-right-color:var(--d)}
+.status-banner.warning{border-right-color:var(--w)}
+.card{background:rgba(255,255,255,.98);border-radius:24px;padding:28px;margin-bottom:20px;box-shadow:0 20px 50px rgba(0,0,0,.15);display:none}
+.card.active{display:block;animation:fadeIn .5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;padding-bottom:16px;border-bottom:3px solid #e2e8f0;flex-wrap:wrap;gap:12px}
+.card-title{font-size:1.4rem;font-weight:800;color:var(--p);display:flex;align-items:center;gap:10px}
+.card-actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn-sm{padding:9px 16px;border-radius:12px;font-size:.85rem;font-weight:700;border:none;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:all .3s;color:#fff;font-family:'Cairo',sans-serif}
+.btn-pdf{background:linear-gradient(135deg,#ef4444,#b91c1c)}
+.btn-excel{background:linear-gradient(135deg,#10b981,#059669)}
+.btn-print{background:linear-gradient(135deg,#8b5cf6,#6d28d9)}
+.btn-sm:hover{transform:translateY(-2px);box-shadow:0 10px 20px rgba(0,0,0,.2)}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:20px}
+.stat-card{background:linear-gradient(135deg,#fff,#f8fafc);border-radius:18px;padding:20px;text-align:center;border:2px solid #e2e8f0;transition:all .3s}
+.stat-card:hover{transform:translateY(-5px);box-shadow:0 15px 35px rgba(0,0,0,.1);border-color:var(--pl)}
+.stat-value{font-size:2.2rem;font-weight:900;background:linear-gradient(135deg,var(--p),var(--pl));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1.1}
+.stat-label{color:var(--g);font-size:.9rem;font-weight:600;margin-top:6px}
+.stat-card.success .stat-value{background:linear-gradient(135deg,#10b981,#059669);-webkit-background-clip:text;background-clip:text}
+.stat-card.danger .stat-value{background:linear-gradient(135deg,#ef4444,#b91c1c);-webkit-background-clip:text;background-clip:text}
+.stat-card.warning .stat-value{background:linear-gradient(135deg,#f59e0b,#d97706);-webkit-background-clip:text;background-clip:text}
+.table-wrapper{overflow-x:auto;border-radius:14px;box-shadow:0 5px 20px rgba(0,0,0,.05);margin-top:18px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;background:#fff}
+th{background:linear-gradient(135deg,var(--p),var(--pl));color:#fff;padding:12px 10px;font-weight:700;text-align:center;white-space:nowrap}
+td{padding:10px;text-align:center;border-bottom:1px solid #e2e8f0}
+tr:hover td{background:#f1f5f9}
+.badge{display:inline-block;padding:4px 11px;border-radius:20px;font-weight:700;font-size:.78rem;white-space:nowrap}
+.badge-excellent{background:#d1fae5;color:#065f46}
+.badge-vgood{background:#dbeafe;color:#1e40af}
+.badge-good{background:#fef3c7;color:#92400e}
+.badge-acceptable{background:#ffedd5;color:#9a3412}
+.badge-weak{background:#fee2e2;color:#991b1b}
+.badge-success{background:#d1fae5;color:#065f46}
+.badge-warning{background:#fef3c7;color:#92400e}
+.badge-danger{background:#fee2e2;color:#991b1b}
+.badge-info{background:#dbeafe;color:#1e40af}
+.chart-container{position:relative;height:340px;margin:20px 0;background:#f8fafc;border-radius:14px;padding:16px}
+.weak-student-card{background:linear-gradient(135deg,#fff,#fef2f2);border:2px solid #fecaca;border-radius:14px;padding:16px;margin-bottom:12px;transition:all .3s;cursor:pointer}
+.weak-student-card:hover{transform:translateX(-5px);box-shadow:0 10px 30px rgba(239,68,68,.15);border-color:var(--d)}
+.weak-student-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.weak-student-name{font-size:1.05rem;font-weight:800;color:var(--d)}
+.weak-student-meta{display:flex;gap:8px;flex-wrap:wrap}
+.weak-student-subjects{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:10px}
+.subject-pill{background:#fff;padding:7px 11px;border-radius:10px;border-right:4px solid var(--d);font-size:.8rem;display:flex;justify-content:space-between;align-items:center;font-weight:600}
+.search-box{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.search-input-wrap{flex:1;min-width:250px;position:relative}
+.search-input{width:100%;padding:13px 45px 13px 16px;border-radius:14px;border:2px solid #e2e8f0;font-size:1rem;font-family:'Cairo',sans-serif;font-weight:600;transition:all .3s}
+.search-input:focus{outline:none;border-color:var(--pl);box-shadow:0 0 0 4px rgba(59,130,246,.15)}
+.search-icon{position:absolute;right:15px;top:50%;transform:translateY(-50%);font-size:1.2rem;color:var(--g)}
+.search-results{position:absolute;top:calc(100% + 5px);right:0;left:0;background:#fff;border-radius:12px;box-shadow:0 15px 40px rgba(0,0,0,.2);max-height:350px;overflow-y:auto;z-index:100;display:none}
+.search-results.active{display:block}
+.search-result-item{padding:11px 16px;cursor:pointer;border-bottom:1px solid #f1f5f9;transition:background .2s;display:flex;justify-content:space-between;align-items:center}
+.search-result-item:hover{background:#eff6ff}
+.search-result-name{font-weight:700}
+.search-result-meta{font-size:.82rem;color:var(--g)}
+.btn-qr{background:linear-gradient(135deg,#8b5cf6,#6d28d9);padding:13px 20px;border-radius:14px;color:#fff;border:none;cursor:pointer;font-weight:700;font-family:'Cairo',sans-serif;font-size:.95rem;display:inline-flex;align-items:center;gap:8px;transition:all .3s}
+.btn-qr:hover{transform:translateY(-2px);box-shadow:0 10px 25px rgba(139,92,246,.4)}
+.qr-scanner-modal,.modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.75);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px}
+.qr-scanner-modal.active,.modal-overlay.active{display:flex}
+.qr-scanner-content{background:#fff;border-radius:20px;max-width:520px;width:100%;padding:22px;text-align:center}
+.qr-scanner-content h3{color:var(--p);margin-bottom:12px}
+#qrReader{width:100%;border-radius:12px;overflow:hidden}
+.qr-scanner-actions{display:flex;gap:10px;justify-content:center;margin-top:15px;flex-wrap:wrap}
+.modal-content{background:#fff;border-radius:20px;max-width:900px;width:100%;max-height:90vh;overflow-y:auto;padding:28px;position:relative}
+.modal-close{position:absolute;top:15px;left:15px;background:#f1f5f9;border:none;width:36px;height:36px;border-radius:50%;font-size:1.15rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;z-index:10}
+.modal-close:hover{background:var(--d);color:#fff;transform:rotate(90deg)}
+.student-report{background:#fff;padding:15px}
+.report-header{text-align:center;padding-bottom:16px;border-bottom:3px solid var(--p);margin-bottom:20px}
+.report-header h2{color:var(--p);font-size:1.6rem;margin-bottom:6px}
+.report-info{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px;align-items:start}
+.report-info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px}
+.info-item{background:#f8fafc;padding:11px 13px;border-radius:12px;border-right:4px solid var(--pl)}
+.info-label{font-size:.78rem;color:var(--g);font-weight:600;margin-bottom:3px}
+.info-value{font-size:1rem;font-weight:800}
+.qr-container{text-align:center;background:#f8fafc;padding:14px;border-radius:12px}
+.qr-container #qrcode,.qr-container canvas,.qr-container img{display:inline-block!important;margin:0 auto}
+.qr-label{margin-top:7px;font-size:.78rem;color:var(--g);font-weight:600}
+.report-section{margin-bottom:20px}
+.report-section h3{color:var(--p);font-size:1.1rem;margin-bottom:11px;padding-bottom:7px;border-bottom:2px solid #e2e8f0}
+.report-section p,.report-section li{line-height:1.75;color:#334155;font-size:.93rem}
+.report-section ul{padding-right:25px}
+.subject-scores{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:9px;margin-top:11px}
+.subject-score-card{background:linear-gradient(135deg,#f8fafc,#eff6ff);padding:11px;border-radius:12px;text-align:center;border:2px solid #dbeafe}
+.subject-score-name{font-size:.78rem;font-weight:700;color:var(--g);margin-bottom:5px}
+.subject-score-value{font-size:1.4rem;font-weight:900;color:var(--p)}
+.subject-score-card.excellent{border-color:#10b981;background:linear-gradient(135deg,#ecfdf5,#d1fae5)}
+.subject-score-card.excellent .subject-score-value{color:#059669}
+.subject-score-card.vgood{border-color:#3b82f6;background:linear-gradient(135deg,#eff6ff,#dbeafe)}
+.subject-score-card.vgood .subject-score-value{color:#2563eb}
+.subject-score-card.good{border-color:#f59e0b;background:linear-gradient(135deg,#fffbeb,#fef3c7)}
+.subject-score-card.good .subject-score-value{color:#d97706}
+.subject-score-card.acceptable{border-color:#f97316;background:linear-gradient(135deg,#fff7ed,#ffedd5)}
+.subject-score-card.acceptable .subject-score-value{color:#ea580c}
+.subject-score-card.weak{border-color:#ef4444;background:linear-gradient(135deg,#fef2f2,#fee2e2)}
+.subject-score-card.weak .subject-score-value{color:#dc2626}
+
+/* ============================================================ */
+/* ==========   أنماط تصدير PDF المُحسّنة لـ A4   ============ */
+/* ============================================================ */
+.pdf-wrapper {
+  width: 794px; /* 210mm at 96 DPI */
+  background: #ffffff;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Cairo', sans-serif;
+  color: #0f172a;
+}
+.pdf-report-content {
+  width: 100%;
+  padding: 35px 40px;
+  box-sizing: border-box;
+  background: #ffffff;
+}
+.pdf-report-content h1 {
+  color: var(--p);
+  font-size: 20pt;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 8px;
+  padding-bottom: 10px;
+  border-bottom: 3px solid var(--p);
+}
+.pdf-report-content .pdf-meta {
+  text-align: center;
+  color: #64748b;
+  font-size: 9pt;
+  margin-bottom: 20px;
+}
+.pdf-report-content h2 {
+  color: var(--p);
+  font-size: 14pt;
+  font-weight: 800;
+  margin: 18px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid #e2e8f0;
+  page-break-after: avoid;
+}
+.pdf-report-content h3 {
+  color: var(--p);
+  font-size: 12pt;
+  font-weight: 700;
+  margin: 14px 0 8px;
+  page-break-after: avoid;
+}
+.pdf-report-content .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 14px 0;
+  page-break-inside: avoid;
+}
+.pdf-report-content .stat-card {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  page-break-inside: avoid;
+}
+.pdf-report-content .stat-value {
+  font-size: 20pt;
+  font-weight: 900;
+  color: var(--p);
+  line-height: 1.1;
+}
+.pdf-report-content .stat-label {
+  color: #64748b;
+  font-size: 8pt;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.pdf-report-content .table-wrapper {
+  margin: 10px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+.pdf-report-content table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 9pt;
+}
+.pdf-report-content table thead {
+  display: table-header-group;
+}
+.pdf-report-content table tr {
+  page-break-inside: avoid;
+}
+.pdf-report-content th {
+  background: var(--p) !important;
+  color: #ffffff !important;
+  padding: 7px 6px;
+  font-weight: 700;
+  font-size: 9pt;
+  text-align: center;
+  border: 1px solid var(--p);
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.pdf-report-content td {
+  padding: 6px;
+  text-align: center;
+  border: 1px solid #e2e8f0;
+  font-size: 9pt;
+  background: #ffffff;
+}
+.pdf-report-content tr:nth-child(even) td {
+  background: #f8fafc;
+}
+.pdf-report-content .badge {
+  display: inline-block;
+  padding: 3px 9px;
+  border-radius: 12px;
+  font-size: 8pt;
+  font-weight: 700;
+  white-space: nowrap;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.pdf-report-content .chart-container {
+  margin: 12px 0;
+  text-align: center;
+  page-break-inside: avoid;
+}
+.pdf-report-content .chart-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  max-height: 240px;
+}
+.pdf-report-content .weak-student-card {
+  background: #fef2f2;
+  border: 1.5px solid #fecaca;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 8px;
+  page-break-inside: avoid;
+}
+.pdf-report-content .weak-student-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.pdf-report-content .weak-student-name {
+  font-size: 10pt;
+  font-weight: 800;
+  color: #b91c1c;
+}
+.pdf-report-content .weak-student-meta {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.pdf-report-content .weak-student-subjects {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 5px;
+  margin-top: 6px;
+}
+.pdf-report-content .subject-pill {
+  background: #ffffff;
+  padding: 5px 8px;
+  border-radius: 7px;
+  border-right: 3px solid #ef4444;
+  font-size: 8pt;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+.pdf-report-content ul {
+  padding-right: 20px;
+  line-height: 1.65;
+  font-size: 9.5pt;
+}
+.pdf-report-content li {
+  margin-bottom: 4px;
+}
+.pdf-report-content p {
+  line-height: 1.7;
+  font-size: 9.5pt;
+  color: #334155;
+  margin-bottom: 8px;
+}
+.pdf-report-content .pdf-note {
+  background: #fef3c7;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border-right: 4px solid #f59e0b;
+  margin-top: 12px;
+  font-size: 9pt;
+  page-break-inside: avoid;
+}
+.pdf-report-content .pdf-note.success {
+  background: #d1fae5;
+  border-right-color: #10b981;
+}
+.pdf-report-content .pdf-section {
+  page-break-inside: auto;
+}
+.pdf-report-content .pdf-section-header {
+  page-break-after: avoid;
+}
+
+/* فصل الصفحات للتقارير الطويلة */
+.pdf-report-content .page-break {
+  page-break-before: always;
+}
+
+/* تقرير الطالب الواحد - A4 */
+.pdf-page {
+  width: 190mm;
+  height: 277mm;
+  padding: 5mm;
+  background: #fff;
+  box-sizing: border-box;
+  page-break-after: always;
+  overflow: hidden;
+  font-family: 'Cairo', sans-serif;
+  position: relative;
+}
+.pdf-page:last-child { page-break-after: auto; }
+.pdf-page .pdf-header { text-align: center; border-bottom: 2px solid var(--p); padding-bottom: 3mm; margin-bottom: 3mm; }
+.pdf-page .pdf-header h2 { color: var(--p); font-size: 14pt; margin-bottom: 1.5mm; }
+.pdf-page .pdf-header p { color: var(--g); font-size: 8pt; }
+.pdf-page .pdf-info-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2mm; margin-bottom: 3mm; }
+.pdf-page .pdf-info-item { background: #f8fafc; padding: 2.5mm; border-radius: 2.5mm; border-right: 2px solid var(--pl); }
+.pdf-page .pdf-info-label { font-size: 6.5pt; color: var(--g); font-weight: 600; }
+.pdf-page .pdf-info-value { font-size: 9pt; font-weight: 800; margin-top: .5mm; }
+.pdf-page .pdf-section { margin-bottom: 3mm; }
+.pdf-page .pdf-section h3 { color: var(--p); font-size: 10pt; margin-bottom: 2mm; padding-bottom: 1mm; border-bottom: 1.5px solid #e2e8f0; }
+.pdf-page .pdf-section p { line-height: 1.55; color: #334155; font-size: 8pt; }
+.pdf-page .pdf-section ul { padding-right: 4mm; margin: 1mm 0; }
+.pdf-page .pdf-section li { line-height: 1.55; font-size: 8pt; color: #334155; }
+.pdf-page .pdf-subjects-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2mm; margin-top: 2mm; }
+.pdf-page .pdf-subject-card { padding: 2mm; border-radius: 2mm; text-align: center; border: 1.2px solid #dbeafe; background: #f8fafc; }
+.pdf-page .pdf-subject-card.excellent { border-color: #10b981; background: #ecfdf5; }
+.pdf-page .pdf-subject-card.vgood { border-color: #3b82f6; background: #eff6ff; }
+.pdf-page .pdf-subject-card.good { border-color: #f59e0b; background: #fffbeb; }
+.pdf-page .pdf-subject-card.acceptable { border-color: #f97316; background: #fff7ed; }
+.pdf-page .pdf-subject-card.weak { border-color: #ef4444; background: #fef2f2; }
+.pdf-page .pdf-subject-name { font-size: 6.5pt; font-weight: 700; color: var(--g); margin-bottom: .5mm; }
+.pdf-page .pdf-subject-value { font-size: 11pt; font-weight: 900; color: var(--p); }
+.pdf-page .pdf-subject-card.excellent .pdf-subject-value { color: #059669; }
+.pdf-page .pdf-subject-card.vgood .pdf-subject-value { color: #2563eb; }
+.pdf-page .pdf-subject-card.good .pdf-subject-value { color: #d97706; }
+.pdf-page .pdf-subject-card.acceptable .pdf-subject-value { color: #ea580c; }
+.pdf-page .pdf-subject-card.weak .pdf-subject-value { color: #dc2626; }
+.pdf-page .pdf-qr { text-align: center; margin-top: 3mm; padding: 2mm; background: #f8fafc; border-radius: 2mm; }
+.pdf-page .pdf-qr canvas,.pdf-page .pdf-qr img { margin: 0 auto!important; display: block!important; }
+.pdf-page .pdf-footer { position: absolute; bottom: 3mm; right: 5mm; left: 5mm; text-align: center; font-size: 6.5pt; color: var(--g); border-top: 1px solid #e2e8f0; padding-top: 1.5mm; }
+
+/* Loading overlay */
+.pdf-loading {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,.75); backdrop-filter: blur(5px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; font-family: 'Cairo', sans-serif;
+}
+.pdf-loading-content {
+  background: #fff; padding: 30px 50px; border-radius: 20px;
+  text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.3);
+}
+.pdf-loading-content .spinner {
+  width: 50px; height: 50px; border: 5px solid #e2e8f0;
+  border-top-color: var(--p); border-radius: 50%;
+  margin: 0 auto 15px; animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.pdf-loading-content p { color: var(--p); font-weight: 700; font-size: 1.1rem; }
+.pdf-loading-content small { color: var(--g); display: block; margin-top: 5px; }
+
+@media(max-width:768px){.header h1{font-size:1.3rem}.stat-value{font-size:1.7rem}.card{padding:18px}.report-info{grid-template-columns:1fr}.card-title{font-size:1.1rem}.btn{padding:12px 14px;font-size:.85rem}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>📊 مدرسة عبدالرحمن بن عوف الاعدادية للبنبن - تحليل نتائج الطلاب الذكي</h1>
+    <p id="headerInfo">الصف التاسع · <span id="studentCount">0</span> طالب · <span id="subjectCount">0</span> مادة</p>
+  </div>
+
+  <div class="toolbar">
+    <button class="btn btn-avg" onclick="showCard('avgCard',this)"><span class="btn-icon">📈</span> متوسط التحصيل والنجاح</button>
+    <button class="btn btn-weak" onclick="showCard('weakCard',this)"><span class="btn-icon">⚠️</span> الطلاب الضعاف</button>
+    <button class="btn btn-student" onclick="showCard('studentCard',this)"><span class="btn-icon">🎓</span> تقارير الطلاب</button>
+    <button class="btn btn-needs" onclick="showCard('needsCard',this)"><span class="btn-icon">📋</span> تقرير الاحتياجات</button>
+    <button class="btn btn-plan" onclick="showCard('planCard',this)"><span class="btn-icon">🎯</span> خطة رفع المخرجات</button>
+    <button class="btn btn-upload" onclick="document.getElementById('fileInput').click()"><span class="btn-icon">📁</span> رفع ملف Excel آخر</button>
+  </div>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+
+  <div id="statusBanner" class="status-banner">⏳ جاري تحميل البيانات...</div>
+
+  <div style="background:rgba(255,255,255,.98);border-radius:16px;padding:15px 22px;margin-bottom:20px;box-shadow:0 10px 30px rgba(0,0,0,.1);display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center;">
+    <strong style="color:var(--p);">📊 نظام التقييم:</strong>
+    <span class="badge badge-excellent">ممتاز 90-100</span>
+    <span class="badge badge-vgood">جيد جداً 80-89</span>
+    <span class="badge badge-good">جيد 70-79</span>
+    <span class="badge badge-acceptable">مقبول 50-69</span>
+    <span class="badge badge-weak">ضعيف 0-49</span>
+  </div>
+
+  <div class="card" id="avgCard">
+    <div class="card-header">
+      <div class="card-title">📈 متوسط التحصيل والنجاح</div>
+      <div class="card-actions">
+        <button class="btn-sm btn-print" onclick="printCard('avgCard')">🖨️ طباعة</button>
+        <button class="btn-sm btn-pdf" onclick="exportCardToPDF('avgCard','متوسطات_المدرسة')">📄 PDF</button>
+        <button class="btn-sm btn-excel" onclick="exportTableToExcel('subjectTable','متوسطات_المواد')">📥 Excel</button>
+      </div>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-value" id="overallAchieve">--</div><div class="stat-label">متوسط التحصيل العام</div></div>
+      <div class="stat-card success"><div class="stat-value" id="overallSuccess">--</div><div class="stat-label">متوسط النجاح العام</div></div>
+      <div class="stat-card warning"><div class="stat-value" id="overallGap">--</div><div class="stat-label">الفجوة (نجاح - تحصيل)</div></div>
+      <div class="stat-card"><div class="stat-value" id="totalStudentsDisplay">--</div><div class="stat-label">عدد الطلاب</div></div>
+    </div>
+    <h3 style="color:var(--p);margin:22px 0 12px;">📊 المتوسط حسب الشعبة</h3>
+    <div class="chart-container"><canvas id="sectionChart"></canvas></div>
+    <div class="table-wrapper"><table id="sectionTable"><thead><tr><th>الشعبة</th><th>عدد الطلاب</th><th>متوسط التحصيل %</th><th>متوسط النجاح %</th><th>الفجوة</th><th>التقييم</th></tr></thead><tbody></tbody></table></div>
+    <h3 style="color:var(--p);margin:22px 0 12px;">📚 المتوسط حسب المادة</h3>
+    <div class="chart-container"><canvas id="subjectChart"></canvas></div>
+    <div class="table-wrapper"><table id="subjectTable"><thead><tr><th>المادة</th><th>عدد الطلاب</th><th>متوسط التحصيل %</th><th>متوسط النجاح %</th><th>الفجوة</th><th>التقييم</th></tr></thead><tbody></tbody></table></div>
+  </div>
+
+  <div class="card" id="weakCard">
+    <div class="card-header">
+      <div class="card-title">⚠️ الطلاب الضعاف واحتياجاتهم</div>
+      <div class="card-actions">
+        <button class="btn-sm btn-print" onclick="printCard('weakCard')">🖨️ طباعة</button>
+        <button class="btn-sm btn-pdf" onclick="exportCardToPDF('weakCard','الطلاب_الضعاف')">📄 PDF</button>
+      </div>
+    </div>
+    <div id="weakStudentsList"></div>
+  </div>
+
+  <div class="card" id="studentCard">
+    <div class="card-header">
+      <div class="card-title">🎓 إصدار تقارير الطلاب</div>
+      <div class="card-actions">
+        <button class="btn-sm btn-pdf" onclick="generateAllReportsPDF()">📚 تصدير كل التقارير PDF</button>
+      </div>
+    </div>
+    <div class="search-box">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="studentSearch" placeholder="ابحث بجزء من اسم الطالب..." oninput="searchStudents(this.value)" onfocus="searchStudents(this.value)">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <button class="btn-qr" onclick="openQRScanner()">📷 مسح QR Code</button>
+    </div>
+    <div id="studentReportContainer"></div>
+  </div>
+
+  <div class="card" id="needsCard">
+    <div class="card-header">
+      <div class="card-title">📋 تقرير شامل بالاحتياجات</div>
+      <div class="card-actions">
+        <button class="btn-sm btn-print" onclick="printCard('needsCard')">🖨️ طباعة</button>
+        <button class="btn-sm btn-pdf" onclick="exportCardToPDF('needsCard','تقرير_الاحتياجات')">📄 PDF</button>
+      </div>
+    </div>
+    <div id="needsContent"></div>
+  </div>
+
+  <div class="card" id="planCard">
+    <div class="card-header">
+      <div class="card-title">🎯 خطة رفع مخرجات التعلم</div>
+      <div class="card-actions">
+        <button class="btn-sm btn-print" onclick="printCard('planCard')">🖨️ طباعة</button>
+        <button class="btn-sm btn-pdf" onclick="exportCardToPDF('planCard','خطة_رفع_المخرجات')">📄 PDF</button>
+      </div>
+    </div>
+    <div id="planContent"></div>
+  </div>
+</div>
+
+<div class="qr-scanner-modal" id="qrScannerModal">
+  <div class="qr-scanner-content">
+    <h3>📷 مسح QR Code الطالب</h3>
+    <p style="color:var(--g);margin-bottom:12px;font-size:.9rem;">وجّه الكاميرا نحو رمز QR في تقرير الطالب</p>
+    <div id="qrReader"></div>
+    <div class="qr-scanner-actions">
+      <label class="btn-sm btn-excel" style="cursor:pointer;">📁 رفع صورة QR<input type="file" accept="image/*" style="display:none;" onchange="scanQRFromFile(this.files[0])"></label>
+      <button class="btn-sm btn-pdf" onclick="closeQRScanner()">✕ إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="studentModal">
+  <div class="modal-content">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalReportContent"></div>
+  </div>
+</div>
+
+<script>
+// ==================== البيانات المدمجة ====================
+const EMBEDDED_SUBJECTS = ['الفنون البصرية','التربية الاسلامية','اللغة العربية','اللغة الانجليزية','الرياضيات','العلوم','الدراسات الاجتماعية','الحوسبة وتكنولوجيا المعلومات','التربية البدنية'];
+const EMBEDDED_GRADE = 'التاسع';
+
+const EMBEDDED_RAW = [
+["حبيب الله ايمن السيد علي خليفه","09/1",[100,100,99.5,100,98.5,99,100,100,100]],
+["مكين رمضان ربيع خضري سليمان","09/2",[100,100,100,100,99.5,97.5,100,99,99.5]],
+["محمد عصام محمد عبدالله ياسين","09/7",[100,100,98.5,100,98,98.5,99.5,100,100]],
+["ايمن عامر عبدالقادر بشير احمد","09/3",[100,100,100,98,97.5,99,100,100,99.5]],
+["عمرو انس احمد ابراهيم","09/2",[100,100,100,97,98.5,98.5,100,99.5,100]],
+["حسين سلطان حسين الزهره الاحبابى","09/7",[100,100,99.5,99,96.5,99,99.5,100,100]],
+["سامى محمد سامى محمد صبرى","09/1",[100,100,100,98,97,99,100,99.5,100]],
+["خالد تائب هنداوي","09/7",[100,100,100,98.5,96.5,99.5,97.5,99.5,100]],
+["محمود اشرف محمود عبدالعزيز محمود","09/4",[100,99,100,99,99.5,97.5,98.5,98,100]],
+["شاهين محمد شاهين احمد","09/6",[100,99.5,100,96,97.5,98.5,99.5,100,100]],
+["محمد حمدى عطيه محمود اسماعيل","09/2",[100,100,99,98,97.5,96.5,100,100,100]],
+["محمود عبدالملك اراين","09/6",[100,100,100,98.5,96,95,97.5,98.5,100]],
+["اغيد حسن","09/6",[98.5,100,99,95,97.5,97.5,99.5,98,99.5]],
+["محمد نصحي نوري عبدالحافظ متولي","09/3",[98,100,98,99,99.5,91,98.5,99.5,99.5]],
+["يعقوب يوسف صالح الشيبه","09/2",[100,100,96,97,95.5,95.5,100,98.5,100]],
+["عبدالسلام ياسر خلف","09/6",[100,100,100,91,97,98,97,99,100]],
+["محمد احمد سعيد علي مصطفى","09/6",[100,99.5,98,95.5,94.5,95.5,100,99,100]],
+["محمد سالم محمد صالح ملهيه","09/5",[100,100,98.5,92.5,94.5,97.5,100,99,98]],
+["عبدالله محمد عبدالـلاه محمد حسن","09/1",[99.5,99.5,98.5,94.5,99,92.5,99,96.5,100]],
+["حزام عبدالله حزام نديله المري","09/2",[98,99.5,97.5,95.5,94,96.5,100,99,99]],
+["علي ابراهيم عبدالله ابراهيم وهدان","09/1",[100,99,96.5,96.5,94.5,94.5,98,99.5,100]],
+["أمير جميل العلي","09/2",[100,100,95.5,99,93,94.5,97,99,100]],
+["ايمن الهاشمى كمبال الشيخ ادريس","09/4",[98.5,98,98,94.5,95,97.5,97,98.5,99.5]],
+["محمد عيسى حميد سعيد البادي","09/3",[100,100,97,92,93.5,96,98,99.5,100]],
+["عبدالله محمد احمد ابراهيم ابوعيده","09/3",[96,100,98.5,95,95,94,100,99.5,98]],
+["عبدالرحمن محمد امين الدودو","09/4",[99,99,99.5,98,95,92.5,97,99.5,96.5]],
+["محمد ياسر فتح عبدالعزيز عليوه","09/1",[100,100,96,97,98,88.5,96.5,99.5,100]],
+["غانم صالح حمد هزاع العذبه","09/3",[100,100,93.5,98,96,92,99.5,96.5,100]],
+["راشد متعب طالب الصعاق المرى","09/6",[100,99,98,92,92,97,99.5,97.5,99.5]],
+["سيف وائل الدوان","09/7",[95.5,98.5,100,92,94.5,96.5,99,98,99.5]],
+["محمد حسن محمد بن بريك","09/2",[100,100,95.5,92,92.5,95,100,99.5,98]],
+["عمار شايف عبدالله صالح ملاح","09/1",[100,100,99.5,96.5,87.5,92.5,100,96,99.5]],
+["ثانى راشد على الشيبه المرى","09/6",[91.5,98.5,98,96,92,96,99.5,99,100]],
+["محمود البطل فؤاد تمام ابوالحسن","09/6",[100,98,98.5,95.5,95,91.5,93,98.5,99.5]],
+["المهلب نورالدين الزين النور","09/3",[98,99.5,98.5,94,93,89.5,95.5,100,99.5]],
+["طالب على طالب متعب الصعاق","09/2",[95,99.5,98,91.5,95,94,100,99,95]],
+["راشد سعود راشد شفيع الفهيده","09/6",[99,99,94,97.5,96,92.5,90,98,100]],
+["محمد طه ابراهيم المحمد  الذياب","09/7",[100,97,98,89,93.5,94.5,94.5,98.5,99.5]],
+["فارس منظور","09/7",[100,96,92,99,92.5,89,97,99,99.5]],
+["ادم حسام الدين محمد مهدى ابوالسعدى","09/1",[100,100,97,94,91,91,95.5,95,100]],
+["كرم عمر جميل عناجره","09/4",[97,95.5,97,90.5,98,91.5,97.5,97,99.5]],
+["محمد رضا سعد برهام البدوى","09/1",[100,99.5,96,92.5,90.5,89,99.5,96.5,99.5]],
+["عباس محمد عمران","09/3",[100,99.5,94.5,90.5,93,87,99.5,99,100]],
+["عبدالعزيز محمد كردى طالب المرى","09/7",[89,99,97.5,96.5,93,98,97,93,97]],
+["محمد اكيه","09/5",[91.5,98.5,100,89,94,95.5,99.5,92.5,97.5]],
+["خليفه محسن سالم محمد البارق","09/6",[99,96,95.5,94.5,95.5,92,99.5,88.5,97.5]],
+["حمزه غسان الفاخوري","09/7",[100,98.5,99,86,92,95,90,99,98.5]],
+["حسن علي علوي علي المحضار","09/7",[100,96.5,98,78.5,94.5,93.5,95.5,99.5,98.5]],
+["عبدالعزيز حمد طالب الصعاق المرى","09/1",[92,97.5,98,91.5,90,94.5,95.5,96,99]],
+["سعيد راشد سعيد البريدى المرى","09/3",[90.5,100,93.5,91.5,91.5,91,100,95,100]],
+["مسلى مهدى مبارك ال معيض الحبابى","09/5",[93,98,94.5,92,93.5,95.5,93,95.5,98]],
+["محمد نايف محمد يحيى الشعباني","09/5",[93.5,97.5,97,94,87,90,94.5,100,98.5]],
+["محمد مبارك عبدالله فيصل الدوسرى","09/6",[85.5,98,99,94.5,87.5,96,99,92.5,99.5]],
+["الوليد خالد محمد ابوجندى","09/4",[98.5,97.5,96,95,87.5,82.5,96.5,98,99.5]],
+["ارسالان خان","09/4",[99.5,91.5,95,93.5,93.5,86.5,95,96.5,99.5]],
+["عيسى محمود","09/3",[100,98,94,82,93,91.5,99,92.5,100]],
+["عيسى مبارك شيخ عبدالقادر","09/1",[100,99,97,92,82,87,99.5,97.5,96]],
+["ريان بطرون","09/6",[98.5,94.5,93.5,88,89,94,93,99,100]],
+["خالد سعيد خالد سالم المرى","09/3",[100,99,87.5,85,95.5,95,99.5,91,94.5]],
+["ناصر على ناصر المريزيق المري","09/4",[87.5,98.5,93,92,95,89.5,100,90,99]],
+["على محمد جابر نقادان المرى","09/5",[90,97.5,93.5,92.5,81.5,95.5,95.5,98.5,100]],
+["ياسر مصلح السليمان","09/7",[92.5,98.5,94,87.5,85.5,96,91,99,100]],
+["عبدالباقي صلاح عبدالباقى هرون حسان","09/5",[91.5,93.5,97.5,91.5,85.5,93.5,93,98.5,98.5]],
+["عبدالرحمن حمد راشد العذبه المرى","09/1",[95.5,96.5,90,99,88,89.5,94.5,97,91.5]],
+["حمد على حمد النابت المرى","09/5",[94.5,100,97,85.5,84,96,98,87,97.5]],
+["عبدالله جابر عبدالله البريدى المرى","09/6",[90.5,98,96.5,91.5,94.5,94,99,87.5,87.5]],
+["خليفه معاذ يونس","09/5",[97,97.5,91.5,84.5,85.5,90.5,97,96.5,98.5]],
+["محمد سعد منيخر سعد الوذين","09/4",[83.5,97.5,96.5,94,82.5,90.5,98,97.5,97]],
+["عبدالرحمن صبري سعيد عبدربه","09/3",[100,98,88,75.5,90,87,97.5,99,100]],
+["احمد خلف وادى مسرهد الشمرى","09/4",[87,97.5,98.5,95.5,83.5,91,94,90,97]],
+["محمد المجتبى حسين حسن حسين","09/1",[97.5,99.5,92.5,83.5,77,88,98.5,97,99.5]],
+["محمد مهند محمد عوض","09/7",[97.5,96,92.5,84.5,79.5,91,97,94.5,100]],
+["حمد على حمد الغياثين المرى","09/2",[96.5,96,94,93,80.5,86,99,94,92.5]],
+["سعيد جابر سعيد البريدى المرى","09/1",[82,99.5,91,90,90,92,97,92.5,95]],
+["دعيج طالب رشراش الشلاقى الشمرى","09/4",[95.5,98,95.5,96,74,88.5,92,96.5,92]],
+["فارس مشل غدير فلاح الحسان","09/4",[91,91.5,94.5,89,90,87.5,96.5,94,93]],
+["يوسف سيف سيف محمد سالم","09/6",[99.5,93,90.5,83,85,93,94,89,100]],
+["حمد عجلان محمد البريص المرى","09/5",[100,93,87.5,99.5,81.5,79.5,90.5,98,97.5]],
+["عبدالله سعود عبدالله شويرب الصخابره","09/7",[100,94,95.5,77.5,82.5,91,91.5,94,100]],
+["راشد حمد راشد عمير المرى","09/4",[98.5,86.5,89,96,85,87.5,87.5,95,99.5]],
+["محمداسماعيل حافظ محمد تحسين عطاءالرحمن","09/5",[95.5,97.5,95,95.5,81,86.5,90.5,89.5,93]],
+["احمد مروان عوني مصطفى دلول","09/6",[99,99.5,98,84,76,88,84,95,100]],
+["فارس راشد محمد  الهاجري","09/2",[99,97.5,89,85.5,80.5,86.5,97.5,92,95.5]],
+["هادف محمد هادف انديله الحسناء","09/5",[85.5,97.5,91.5,92.5,91.5,94.5,98.5,84.5,85.5]],
+["تيم بوغقال","09/4",[99.5,82.5,92,94,87.5,85,83.5,97.5,100]],
+["عبدالرحمن حمد طالب الصعاق المرى","09/1",[98.5,97,93,81.5,71,89.5,97,94.5,99]],
+["حمد سالم حمد على المرى","09/1",[94.5,95,89,90,87.5,78,98.5,92,95.5]],
+["سعود فهيد براك حصين المرى","09/2",[79,99.5,92,90.5,91.5,89.5,97.5,89,90]],
+["معاذ سامح محمد عبد الفتاح على","09/3",[100,95.5,92,82.5,79,82,90.5,97,99.5]],
+["تميم محمد احمد عبد الكريم الصمادي","09/4",[98,98.5,94,80,76,87.5,88,96,100]],
+["ناصر حمد سعد ال سعد الكعبى","09/5",[90.5,95,86.5,90.5,85.5,81,93,95,100]],
+["عمر جابر محمد حمران المرى","09/6",[87,95,90.5,95,87.5,94.5,90.5,88,87.5]],
+["محمد الطيب مكى احمد الفكى","09/5",[92,98,91.5,92,78.5,84.5,93,91.5,94]],
+["عيسى عبدالعزيز محمد  ايوب","09/7",[83,98,88,88,83.5,92.5,95,87.5,99]],
+["خالد مشعل ناصر الحمرانى الهاجرى","09/1",[95.5,97,88.5,83.5,84,88,96.5,89,92]],
+["حمزة سعيد ابراهيم عبدالجواد","09/5",[98,93,92,87,77.5,84,89.5,93,100]],
+["فهد سالم مسفر فراج الدوسرى","09/3",[90,98.5,88,81,93,89,97.5,88.5,87.5]],
+["احمد محمد احمد الباشا الجماعي","09/2",[90.5,98.5,89.5,93.5,81.5,81.5,94.5,87.5,94.5]],
+["يحيى زكريا حارب غابش الخميسي","09/6",[98,95.5,92.5,87,75,83.5,90.5,89,99.5]],
+["عبدالعزيز فهد ميان محمد شريف","09/7",[91.5,88.5,91,82,85.5,95,92,88,96.5]],
+["على حمد محمد حبانا المرى","09/1",[81,100,92,88.5,76,93.5,97,86.5,95]],
+["محمد سالم فهد فراج الدوسرى","09/6",[83,96,87.5,86,83.5,86,96,92.5,97]],
+["حمد سالم مبخوت محمد جابر","09/2",[81.5,95.5,88,86,88,90,100,90,88.5]],
+["محمد شهباز خان","09/3",[96.5,93,88.5,85,72.5,82,96.5,93,99.5]],
+["حمد بخيت سالم مبخوت البوفريح","09/1",[96,91.5,84,84.5,76.5,82,99,91.5,99.5]],
+["أحمد غسان ابراهيم على الطاهر","09/4",[95.5,92,90,79.5,75.5,86,86.5,95,100]],
+["جابر حمد علي راشد المرى","09/3",[78.5,100,95,85.5,85.5,83,92.5,82.5,96]],
+["عبدالغني عبدالناصر شيخ احمد","09/5",[90,92,92.5,87.5,73.5,86.5,85,94.5,96.5]],
+["محمد سعد محمد الوهيبي الزعبي","09/1",[80,93.5,91.5,88,78.5,89.5,95,92.5,89]],
+["سعود خالد سالم على المحشادى","09/1",[81.5,92.5,87,88,83,97.5,94.5,84,89]],
+["سالم عبدالله سالم نقدان المرى","09/4",[79,96.5,85.5,77.5,92,93,97.5,86,89]],
+["هادى سعيد عبدالله البريدى المرى","09/6",[80.5,96,91.5,83.5,90.5,86.5,93.5,83.5,90]],
+["ناصر نواف ناصر المظفرى الهاجرى","09/4",[90.5,87.5,88,86,80.5,82.5,90.5,95,93]],
+["طالب حمد طالب متعب الصعاق","09/2",[97,92,83,78,86,86,93,93,81.5]],
+["محمد عبدالرحمن محمد الزبدان المرى","09/2",[75,97.5,87.5,87,76,91,94.5,90,90]],
+["ناصر محمد ناصر الحفيظ المرى","09/4",[78.5,99.5,89.5,80,83,85,97,82,94]],
+["محمد عبدالرحمن حسن المالكى الجهنى","09/1",[88,93,84.5,85,74,83.5,95.5,91.5,90]],
+["مشعل حسن مسفر حسن الكربى","09/1",[100,88.5,78.5,83.5,77.5,80.5,84.5,95.5,95.5]],
+["تميم محمد عبدالهادى عبدالله النابت","09/4",[82,93.5,90,78,87,87,81.5,83.5,99]],
+["سعيد محمد سعيد التمتام المرى","09/2",[81.5,93,88.5,80,82.5,76,96,88.5,95.5]],
+["نبال الدين فلاح الحسين","09/1",[100,94.5,86,75,69,76,84,97,99.5]],
+["محمد عبدالرحمن منيف ال منيف الكعبى","09/2",[98,90,84.5,78,76,79,89,96,90.5]],
+["حمد نادر صقر عبدالله خليفه","09/6",[89.5,90,88,78,87,84.5,96.5,73,94]],
+["فهد محمد على هوبش المرى","09/7",[81.5,94,93,91,64,86.5,92.5,90.5,85.5]],
+["عبدالله صالح محمد السندوانه المرى","09/1",[86,98,82.5,78,74.5,88,93,83,95.5]],
+["سعود فيصل محمد الغفراني المري","09/7",[83,90.5,88.5,79.5,76,85.5,92.5,84.5,98.5]],
+["سالم حمد ناصر الحفيظ المرى","09/2",[81,96.5,87.5,82,72,80,95,86,98]],
+["محمد حمد راشد الجهيره العذبه","09/3",[89,96,90.5,69,70.5,86,96.5,82.5,97.5]],
+["محمد سالم عبدالله المخظبه الهاجرى","09/5",[87,83.5,90.5,81.5,74.5,87,98.5,86,87]],
+["صالح عبدالله سالم النابت المرى","09/5",[79.5,93,90,77,76,84.5,94.5,82,98.5]],
+["محمد سعيد محمد هوبش المرى","09/7",[83.5,86,95,86.5,69.5,84,92.5,85.5,90]],
+["محمد عبدالفتاح محمد شيخ محمود","09/7",[89.5,92.5,81,67.5,69,87.5,95,91.5,98.5]],
+["سعود احمد محمد عايظ الحنزاب","09/7",[87.5,91.5,92.5,82.5,61,86.5,86,86.5,97.5]],
+["ظفر محمد حشر هادى الهاجرى","09/6",[82,81,97,82,85,86.5,96,76,83.5]],
+["راشد سعيد سالم محمد المرى","09/2",[81.5,93.5,88,81.5,68.5,93,91.5,88,83]],
+["مسلم سعيد سليم المهرى الكثيرى","09/6",[82,88.5,85.5,87,86.5,77,89.5,79.5,91.5]],
+["سعيد سالم ناصر النابت المرى","09/2",[83,96,87,76.5,78,82.5,92.5,85.5,86]],
+["غانم محمد تركى المشعلى القحطانى","09/2",[73,92.5,89.5,85.5,80.5,82.5,99,80.5,82.5]],
+["مجتبى عبدالله الطيب عبداللطيف","09/5",[84,90,83,69.5,80,84,90,87,97.5]],
+["احمد خالد عايض حمد العذبه","09/3",[74.5,97,80,76.5,87,84,91.5,88,85.5]],
+["على عبدالهادى محمد هوبش المرى","09/5",[87.5,89.5,90.5,85,71.5,86,85,84,84]],
+["سالم براك محمد الزبدان المرى","09/4",[77.5,91,87,82,72,89.5,91,81.5,90]],
+["محمد عايل سالم الدرعي","09/4",[81,90.5,86.5,87.5,71.5,76.5,85.5,86.5,95.5]],
+["سعود ناصر عواد الفريجى الرويلى","09/3",[77,93.5,84.5,96,71,74,83,88,94]],
+["نايف بريك طالب ال جميله المرى","09/1",[87,94.5,79.5,78.5,76.5,82,79,86,97.5]],
+["مبارك محمد مبارك نصيب العبدالله","09/7",[78.5,85,84.5,88.5,77,83.5,91.5,76.5,94]],
+["حمد بخيت سعد بخيت الكبيسى","09/3",[74.5,90.5,77,78,86,82.5,93,81.5,95.5]],
+["سعد سالم محمد سعيد الراشدى","09/3",[92,92.5,73,71,70.5,83.5,83.5,93.5,97.5]],
+["سالم حمد سالم طالب الفهيدى","09/1",[78.5,96,82.5,76,62,80.5,93.5,90,98]],
+["شبعان راشد فيصل بن شبعان الهاجرى","09/7",[81.5,85,82,83.5,76.5,78,94.5,83.5,91]],
+["عبدالله حمد محمد حنزاب العذبه","09/6",[87,88,84.5,70,82.5,85,86.5,83,88]],
+["زهيب زبير","09/7",[83,88.5,81.5,83,62,79,88,91,97.5]],
+["محمد على صالح البحيح المرى","09/4",[80.5,92,83,81,62.5,83,87,88.5,95]],
+["مشعل بشير احمد رضا محمد","09/7",[96.5,86.5,71.5,83.5,74,78.5,80.5,93,87.5]],
+["مشعل سعيد خميس سعيد السعدي","09/2",[85.5,83,81.5,84,72.5,80,80.5,85.5,98.5]],
+["محمد مبارك محمد القمرا المرى","09/6",[80,89.5,89.5,81.5,80,82.5,89,79.5,79]],
+["عبدالعزيز تيسير المهنا","09/5",[87.5,93.5,90.5,69,62.5,82,87,80.5,97.5]],
+["محمد عبدالهادي اذعار الهاجري","09/5",[95.5,91.5,84.5,71,65,77,77.5,92,93.5]],
+["خالد بدر خالد الثقفى العتيبى","09/2",[91,87,75,78.5,72.5,77,90.5,87,86]],
+["نادر سعد بلال عثمان النعيمى","09/3",[76,93.5,84,88,67.5,75,85.5,87,86]],
+["على حارب خليفه حارب الجابرى","09/7",[94,76.5,83.5,77,74,82,76.5,87,91.5]],
+["على محمد على الاخن المريزيق","09/4",[82,90,77,80.5,64.5,87,82.5,84.5,93.5]],
+["على سهيل على حفار المرى","09/6",[78.5,83.5,81.5,78.5,86.5,79,89.5,73,91.5]],
+["تركى ناصر سالم البكرى اليافعى","09/1",[80.5,91,87,83.5,73,78.5,83.5,80.5,82]],
+["حسن مبارك مترك جراب الاحبابى","09/2",[77,75,78.5,81,84,73,93.5,87.5,88]],
+["سعود على رشاد القصاص","09/3",[72.5,89,81,81,77.5,81.5,83.5,82,88]],
+["محمد سعد محمد المخظبه الهاجرى","09/6",[81,89,90,81.5,58,80,95.5,82.5,77.5]],
+["فالح حمد احمد فالح ال ثانى","09/2",[95,65,65,93,66.5,80.5,90,83.5,96.5]],
+["حمدان حمد سعيد هطيل البحيح","09/4",[78,77.5,74.5,93.5,74.5,73.5,85.5,86,91.5]],
+["صالح حمد ناصر الحفيظ المرى","09/5",[83,82.5,80.5,70,76.5,74.5,93,89.5,84.5]],
+["الفيصل على محمد ال سلطان الهاجرى","09/5",[84,86.5,88.5,76.5,64,81.5,79.5,83,89.5]],
+["بطحان سعيد حمد صالح حديد","09/4",[82.5,88,85,76.5,72.5,74,82,79.5,91.5]],
+["عبدالرحمن محمد عثمان أحمد عثمان","09/2",[89,76.5,74.5,66.5,83.5,72.5,84,86,97.5]],
+["تميم حمد منصر القايد الغياثين","09/2",[79,92,69.5,72,75,82.5,80.5,85,93]],
+["مبارك ثابت سعد مرزوق العبدالله","09/3",[78,89.5,80.5,74,69.5,72.5,88.5,84,90.5]],
+["زهير زبير","09/7",[84.5,80.5,78.5,76,59.5,75,82.5,93,97.5]],
+["جاسم طلال محمد ال حسان الشمرى","09/7",[81,84.5,85.5,72,73.5,72.5,77.5,83,97]],
+["محمد الخضر عبدالله حسين الكربى","09/7",[84.5,87,73.5,64,70.5,83,79,89.5,95.5]],
+["محمد عبدالله محمد مبارك المسيفرى","09/3",[86.5,84.5,73.5,65.5,62.5,74,90.5,90.5,97.5]],
+["جابر على براك حصين المرى","09/1",[74,97.5,76,88,68.5,76,83,81.5,77.5]],
+["سلطان فهد عبدالله محمد العامرى","09/1",[97,73,76.5,79.5,66,74,83.5,86,85.5]],
+["محمد هادى محمد حمران المرى","09/1",[78,87,79,78.5,71.5,73.5,84,83,86.5]],
+["عمر محمد عثمان أحمد عثمان","09/3",[100,87.5,71.5,72,63.5,73.5,72.5,83,97.5]],
+["سعود حمد سالم جابر الاسود","09/3",[78.5,86.5,82,71,74,85,76,77.5,89.5]],
+["مشعل رشيد احمد","09/2",[82,82,77,76.5,71,72.5,79.5,86,93.5]],
+["راشد حمد راشد المريزيق المرى","09/3",[80.5,95,75,61,62,70,91,83,98]],
+["خالد عبدالعزيز","09/7",[83,76,83,79,63,82,80.5,81,87.5]],
+["راشد خالد سعود مسرهد الشمرى","09/5",[82.5,78.5,81.5,74.5,68.5,82,82,79,82]],
+["نواف خميس على حسن سعد","09/4",[83,96,70.5,79,50,70,83.5,83,92]],
+["خالد مبارك محمد عايظ الحنزاب","09/5",[81,81.5,84,65.5,74,79.5,83,74.5,82]],
+["عبدالله حمد سالم ال وارد المرى","09/5",[82,73.5,84.5,68.5,61.5,81,80.5,80.5,89.5]],
+["حسين عبدالله على عبدالله ابوشارب","09/6",[79,73,67.5,74,83.5,75,89,73.5,83.5]],
+["محمد حمد على ال سلطان الهاجرى","09/5",[81,83,69,72.5,65.5,80.5,85,75,82.5]],
+["فهد سعيد محمد راشد عضيبه","09/4",[89.5,85.5,73,65.5,56,72,78,83,88.5]],
+["عبدالعزيز احمد محمود جاسم الهيدوس","09/3",[72.5,74,82,74,56.5,78.5,75,84.5,94]],
+["محمد ناصر محمد المخظبه الهاجرى","09/4",[77,73,67.5,76.5,65,66.5,69.5,88,92.5]],
+["على عبدالعزيز على محمد دجران","09/3",[78.5,80,62.5,82.5,61,68,68,86.5,84.5]],
+["سلطان محمد طالب عفيفه المرى","09/2",[80,72,67,69.5,66.5,65.5,73,83,87]],
+["على ناصر محمد الزبدان المرى","09/7",[76,66,81,66,65.5,81,69,68.5,89.5]],
+["فهد بدر عائض ناصر القحطانى","09/5",[84.5,68.5,65,64,70.5,75.5,77.5,82,73]],
+["احمد عبدالكريم محمود على على","09/2",[80,82,68,70,69,59,65.5,78,88.5]],
+["محمد حمد راشد المسعود المرى","09/6",[77.5,71,72,63.5,60.5,72.5,73.5,75,81]],
+["سعيد حمد على سعيد حديد","09/5",[73.5,52,51,78.5,62,66,66.5,63.5,71.5]]
+];
+
+let allStudents = [];
+let SUBJECTS = [];
+let currentData = [];
+let charts = {};
+let html5QrCode = null;
+
+// ==================== نظام التقييم ====================
+function getGradeInfo(score) {
+  if (score >= 90) return { text: 'ممتاز',    class: 'excellent',  badge: 'badge-excellent' };
+  if (score >= 80) return { text: 'جيد جداً', class: 'vgood',      badge: 'badge-vgood' };
+  if (score >= 70) return { text: 'جيد',      class: 'good',       badge: 'badge-good' };
+  if (score >= 50) return { text: 'مقبول',    class: 'acceptable', badge: 'badge-acceptable' };
+  return               { text: 'ضعيف',    class: 'weak',       badge: 'badge-weak' };
+}
+function getGradeText(avg) { return getGradeInfo(avg).text; }
+
+function calculateStudentAvg(student) {
+  const scores = Object.values(student.scores);
+  if (scores.length === 0) return 0;
+  return scores.reduce((a,b) => a+b, 0) / scores.length;
+}
+
+// ==================== تحميل البيانات ====================
+function loadEmbeddedData() {
+  SUBJECTS = [...EMBEDDED_SUBJECTS];
+  allStudents = EMBEDDED_RAW.map(r => {
+    const scores = {};
+    EMBEDDED_SUBJECTS.forEach((subj, j) => { scores[subj] = r[2][j]; });
+    return { name: r[0], section: r[1], grade: EMBEDDED_GRADE, scores };
+  });
+  rebuildCurrentData();
+}
+
+function rebuildCurrentData() {
+  currentData = [];
+  allStudents.forEach(st => {
+    SUBJECTS.forEach(subj => {
+      const v = st.scores[subj];
+      if (v !== undefined && !isNaN(v)) {
+        currentData.push({
+          studentName: st.name, section: st.section, grade: st.grade,
+          subject: subj, achieve: v, success: v >= 50 ? 100 : 0
+        });
+      }
+    });
+  });
+}
+
+// ==================== محرك تحليل Excel ====================
+function smartParseWorkbook(workbook) {
+  const students = [], subjects = [], debug = [];
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName];
+    if (!sheet) continue;
+    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', blankrows: false });
+    if (!rows || rows.length < 3) continue;
+    debug.push(`📄 ورقة: "${sheetName}" (${rows.length} صف)`);
+    const result = parseSheet(rows, sheetName, debug);
+    if (result.students.length > 0) {
+      result.students.forEach(st => students.push(st));
+      result.subjects.forEach(s => { if (!subjects.includes(s)) subjects.push(s); });
+    }
+  }
+  return { students, subjects, debug };
+}
+
+function parseSheet(rows, sheetName, debug) {
+  let subjectRowIdx = -1, subjectCandidates = [];
+  for (let i = 0; i < Math.min(rows.length, 20); i++) {
+    const row = rows[i] || [];
+    const candidates = [];
+    for (let j = 0; j < row.length; j++) {
+      const raw = String(row[j] || '').trim();
+      if (!raw) continue;
+      if (!isNaN(parseFloat(raw)) && !isNaN(Number(raw))) continue;
+      if (raw.length < 2) continue;
+      if (isHeaderKeyword(raw)) continue;
+      if (/^\d+\s*[A-Za-z]$/i.test(raw)) continue;
+      if (/^[\d\s.\/%]+$/.test(raw)) continue;
+      candidates.push({ idx: j, text: raw });
+    }
+    const valid = candidates.filter(c => {
+      let n = 0;
+      for (let r = i + 1; r < Math.min(rows.length, i + 40); r++) {
+        const v = parseFloat(rows[r]?.[c.idx]);
+        if (!isNaN(v) && v >= 0 && v <= 100) n++;
+      }
+      return n >= 3;
+    });
+    if (valid.length > subjectCandidates.length) { subjectRowIdx = i; subjectCandidates = valid; }
+  }
+  if (subjectCandidates.length === 0) { debug.push('  ⚠️ لا توجد أعمدة مواد'); return { students: [], subjects: [] }; }
+  debug.push(`  ✅ صف المواد: ${subjectRowIdx + 1}، عدد: ${subjectCandidates.length}`);
+  debug.push(`  📚 المواد: ${subjectCandidates.map(c => c.text).join(' | ')}`);
+
+  let nameCol = -1, sectionCol = -1;
+  for (let i = Math.max(0, subjectRowIdx - 1); i <= Math.min(subjectRowIdx + 3, rows.length - 1); i++) {
+    const row = rows[i] || [];
+    for (let j = 0; j < row.length; j++) {
+      const cell = String(row[j] || '').trim();
+      if (!cell) continue;
+      if (nameCol === -1 && isNameHeader(cell)) nameCol = j;
+      if (sectionCol === -1 && isSectionHeader(cell)) sectionCol = j;
+    }
+  }
+  if (nameCol === -1) {
+    const maxC = Math.min(5, rows[subjectRowIdx]?.length || 0);
+    for (let j = 0; j < maxC; j++) {
+      if (subjectCandidates.some(c => c.idx === j)) continue;
+      let t = 0, n = 0;
+      for (let i = subjectRowIdx + 1; i < Math.min(rows.length, subjectRowIdx + 40); i++) {
+        const v = String(rows[i]?.[j] || '').trim();
+        if (!v) continue;
+        if (isNaN(parseFloat(v)) || /[^\d.\-]/.test(v)) t++; else n++;
+      }
+      if (t >= 3 && t > n) { nameCol = j; break; }
+    }
+  }
+  if (nameCol === -1) { debug.push('  ⚠️ لا يوجد عمود اسم'); return { students: [], subjects: [] }; }
+  debug.push(`  👤 عمود الاسم: ${nameCol}، الشعبة: ${sectionCol}`);
+
+  let dataStart = subjectRowIdx + 1;
+  for (let i = subjectRowIdx + 1; i < Math.min(rows.length, subjectRowIdx + 10); i++) {
+    const nv = String(rows[i]?.[nameCol] || '').trim();
+    if (nv && nv.length > 2 && !isHeaderKeyword(nv) && !isNameHeader(nv) && isNaN(parseFloat(nv))) { dataStart = i; break; }
+  }
+
+  const students = [], subjects = subjectCandidates.map(c => c.text);
+  for (let i = dataStart; i < rows.length; i++) {
+    const row = rows[i];
+    if (!row || row.length === 0) continue;
+    const name = String(row[nameCol] || '').trim();
+    if (!name || name.length < 2) continue;
+    if (isHeaderKeyword(name) || isNameHeader(name)) continue;
+    if (!isNaN(parseFloat(name)) && !isNaN(Number(name))) continue;
+    const section = sectionCol !== -1 ? String(row[sectionCol] || '').trim() : 'غير محدد';
+    const scores = {}; let hasScore = false;
+    subjectCandidates.forEach(sc => {
+      const val = parseFloat(row[sc.idx]);
+      if (!isNaN(val) && val >= 0 && val <= 100) { scores[sc.text] = val; hasScore = true; }
+    });
+    if (hasScore) students.push({ name, section, grade: sheetName, scores });
+  }
+  debug.push(`  🎓 عدد الطلاب: ${students.length}`);
+  return { students, subjects };
+}
+
+function isNameHeader(text) {
+  const t = String(text).trim().toLowerCase();
+  return t === 'الاسم' || t === 'اسم' || t === 'اسم الطالب' || t === 'اســم' || t.includes('اسم الطالب') || t === 'name' || t === 'student name' || t === 'student';
+}
+function isSectionHeader(text) {
+  const t = String(text).trim().toLowerCase();
+  return t.includes('شعبة') || t.includes('الشعبة') || t.includes('قسم') || t === 'section' || t === 'class';
+}
+function isHeaderKeyword(text) {
+  const t = String(text).trim().toLowerCase();
+  const kws = ['النهاية العظمى','النهاية الصغرى','المجموع','المعدل','المتوسط','المرحلة','الصف','المستوى','الفصل','العام الدراسي','total','average','max','min','sum','grade','level'];
+  return kws.some(k => t === k || t.includes(k));
+}
+
+document.getElementById('fileInput').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  showStatus('⏳ جاري قراءة الملف...', 'warning');
+  const reader = new FileReader();
+  reader.onload = (evt) => {
+    try {
+      const data = new Uint8Array(evt.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const result = smartParseWorkbook(workbook);
+      if (!result.students || result.students.length === 0) {
+        showStatus('❌ لم يتم العثور على بيانات.\n\n' + result.debug.join('\n'), 'error');
+        return;
+      }
+      SUBJECTS = result.subjects;
+      allStudents = result.students;
+      rebuildCurrentData();
+      showStatus(`✅ تم التحليل!\n👥 ${allStudents.length} طالب · 📚 ${SUBJECTS.length} مادة · 📄 ${currentData.length} سجل\n\n${result.debug.join('\n')}`, 'success');
+      document.getElementById('headerInfo').innerHTML = `${file.name} · <span id="studentCount">${allStudents.length}</span> طالب · <span id="subjectCount">${SUBJECTS.length}</span> مادة`;
+      initAll();
+    } catch (err) {
+      console.error(err);
+      showStatus('❌ خطأ: ' + err.message, 'error');
+    } finally { fileInput.value = ''; }
+  };
+  reader.onerror = () => showStatus('❌ فشل القراءة', 'error');
+  reader.readAsArrayBuffer(file);
+});
+
+function showStatus(msg, type) {
+  const b = document.getElementById('statusBanner');
+  b.textContent = msg;
+  b.className = 'status-banner';
+  if (type === 'error') b.classList.add('error');
+  if (type === 'warning') b.classList.add('warning');
+}
+
+// ==================== عرض الكروت ====================
+function showCard(cardId, btnEl) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.toolbar .btn').forEach(b => b.classList.remove('active'));
+  const card = document.getElementById(cardId);
+  card.classList.add('active');
+  if (btnEl) btnEl.classList.add('active');
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => { Object.values(charts).forEach(c => { if (c) c.resize(); }); }, 150);
+}
+function closeModal() { document.getElementById('studentModal').classList.remove('active'); }
+
+// ==================== 1. المتوسطات ====================
+function updateAverages() {
+  if (currentData.length === 0) return;
+  const totalA = currentData.reduce((s, r) => s + r.achieve, 0);
+  const totalS = currentData.reduce((s, r) => s + (r.achieve >= 50 ? 100 : 0), 0);
+  const avgA = totalA / currentData.length;
+  const avgS = totalS / currentData.length;
+  document.getElementById('overallAchieve').textContent = avgA.toFixed(1) + '%';
+  document.getElementById('overallSuccess').textContent = avgS.toFixed(1) + '%';
+  document.getElementById('overallGap').textContent = (avgS - avgA).toFixed(1) + '%';
+  document.getElementById('totalStudentsDisplay').textContent = allStudents.length;
+
+  const sectionMap = {};
+  currentData.forEach(r => {
+    if (!sectionMap[r.section]) sectionMap[r.section] = { a: [], s: [] };
+    sectionMap[r.section].a.push(r.achieve);
+    sectionMap[r.section].s.push(r.achieve >= 50 ? 100 : 0);
+  });
+  const sectionStats = Object.keys(sectionMap).map(s => {
+    const a = sectionMap[s].a, su = sectionMap[s].s;
+    const avgA = a.reduce((x,y) => x+y, 0) / a.length;
+    const avgS = su.reduce((x,y) => x+y, 0) / su.length;
+    return { section: s, count: a.length, avgAchieve: avgA, avgSuccess: avgS, gap: avgS - avgA };
+  }).sort((a,b) => String(a.section).localeCompare(String(b.section), 'ar'));
+
+  document.querySelector('#sectionTable tbody').innerHTML = sectionStats.map(s => {
+    const g = getGradeInfo(s.avgAchieve);
+    return `<tr><td><strong>${s.section}</strong></td><td>${s.count}</td>
+      <td>${s.avgAchieve.toFixed(1)}%</td><td>${s.avgSuccess.toFixed(1)}%</td>
+      <td>${s.gap.toFixed(1)}%</td><td><span class="badge ${g.badge}">${g.text}</span></td></tr>`;
+  }).join('');
+
+  const subjectMap = {};
+  currentData.forEach(r => {
+    if (!subjectMap[r.subject]) subjectMap[r.subject] = { a: [], s: [] };
+    subjectMap[r.subject].a.push(r.achieve);
+    subjectMap[r.subject].s.push(r.achieve >= 50 ? 100 : 0);
+  });
+  const subjectStats = Object.keys(subjectMap).map(s => {
+    const a = subjectMap[s].a, su = subjectMap[s].s;
+    const avgA = a.reduce((x,y) => x+y, 0) / a.length;
+    const avgS = su.reduce((x,y) => x+y, 0) / su.length;
+    return { subject: s, count: a.length, avgAchieve: avgA, avgSuccess: avgS, gap: avgS - avgA };
+  }).sort((a,b) => a.avgAchieve - b.avgAchieve);
+
+  document.querySelector('#subjectTable tbody').innerHTML = subjectStats.map(s => {
+    const g = getGradeInfo(s.avgAchieve);
+    return `<tr><td><strong>${s.subject}</strong></td><td>${s.count}</td>
+      <td>${s.avgAchieve.toFixed(1)}%</td><td>${s.avgSuccess.toFixed(1)}%</td>
+      <td>${s.gap.toFixed(1)}%</td><td><span class="badge ${g.badge}">${g.text}</span></td></tr>`;
+  }).join('');
+
+  if (charts.section) charts.section.destroy();
+  charts.section = new Chart(document.getElementById('sectionChart'), {
+    type: 'bar',
+    data: {
+      labels: sectionStats.map(s => 'شعبة ' + s.section),
+      datasets: [
+        { label: 'متوسط التحصيل %', data: sectionStats.map(s => s.avgAchieve), backgroundColor: '#3b82f6', borderRadius: 8 },
+        { label: 'متوسط النجاح %', data: sectionStats.map(s => s.avgSuccess), backgroundColor: '#10b981', borderRadius: 8 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } } }
+  });
+
+  if (charts.subject) charts.subject.destroy();
+  charts.subject = new Chart(document.getElementById('subjectChart'), {
+    type: 'bar',
+    data: {
+      labels: subjectStats.map(s => s.subject),
+      datasets: [
+        { label: 'متوسط التحصيل %', data: subjectStats.map(s => s.avgAchieve), backgroundColor: '#8b5cf6', borderRadius: 8 },
+        { label: 'متوسط النجاح %', data: subjectStats.map(s => s.avgSuccess), backgroundColor: '#06b6d4', borderRadius: 8 }
+      ]
+    },
+    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } } } }
+  });
+}
+
+// ==================== 2. الطلاب الضعاف ====================
+function updateWeakStudents() {
+  const weakList = allStudents.map(st => {
+    const weakSubs = [];
+    Object.keys(st.scores).forEach(subj => {
+      if (st.scores[subj] < 70) weakSubs.push({ subject: subj, score: st.scores[subj] });
+    });
+    return { ...st, weakSubs, avg: calculateStudentAvg(st) };
+  }).filter(st => st.weakSubs.length > 0).sort((a,b) => a.avg - b.avg);
+
+  const container = document.getElementById('weakStudentsList');
+  if (weakList.length === 0) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--s);font-size:1.2rem;font-weight:700;">🎉 لا يوجد طلاب ضعاف!</div>';
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="background:#fef3c7;padding:14px 18px;border-radius:12px;margin-bottom:18px;border-right:5px solid #f59e0b;">
+      <strong>⚠️ إجمالي الطلاب الذين يحتاجون دعماً:</strong> ${weakList.length} من أصل ${allStudents.length}
+      <div style="font-size:.85rem;margin-top:5px;color:#92400e;">(الطلاب الحاصلون على تقدير "ضعيف" أو "مقبول" في مادة واحدة على الأقل)</div>
+    </div>
+    ${weakList.map(st => {
+      const overallGrade = getGradeInfo(st.avg);
+      return `
+      <div class="weak-student-card" onclick="showStudentReport('${st.name.replace(/'/g, "\\'")}')">
+        <div class="weak-student-header">
+          <div class="weak-student-name">👤 ${st.name}</div>
+          <div class="weak-student-meta">
+            <span class="badge badge-info">${st.grade}</span>
+            <span class="badge badge-info">شعبة ${st.section}</span>
+            <span class="badge ${overallGrade.badge}">المتوسط ${st.avg.toFixed(1)}% - ${overallGrade.text}</span>
+          </div>
+        </div>
+        <div style="font-size:.88rem;color:var(--g);margin-bottom:8px;font-weight:600;">
+          المواد التي تحتاج تحسين (${st.weakSubs.length}):
+        </div>
+        <div class="weak-student-subjects">
+          ${st.weakSubs.map(ws => {
+            const g = getGradeInfo(ws.score);
+            return `<div class="subject-pill"><span>${ws.subject}</span><span class="badge ${g.badge}" style="font-size:.75rem;">${ws.score} - ${g.text}</span></div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    }).join('')}`;
+}
+
+// ==================== 3. بحث الطلاب ====================
+function searchStudents(query) {
+  const resultsEl = document.getElementById('searchResults');
+  const q = String(query || '').trim();
+  if (q.length === 0) { resultsEl.classList.remove('active'); resultsEl.innerHTML = ''; return; }
+  const matches = allStudents.filter(s => s.name.includes(q) || s.name.toLowerCase().includes(q.toLowerCase()) || s.section.includes(q)).slice(0, 15);
+  if (matches.length === 0) {
+    resultsEl.innerHTML = '<div style="padding:15px;text-align:center;color:var(--g);">لا توجد نتائج</div>';
+    resultsEl.classList.add('active'); return;
+  }
+  resultsEl.innerHTML = matches.map(s => {
+    const avg = calculateStudentAvg(s);
+    const g = getGradeInfo(avg);
+    return `<div class="search-result-item" onclick="selectStudent('${s.name.replace(/'/g, "\\'")}')">
+      <div><div class="search-result-name">${highlightMatch(s.name, q)}</div>
+      <div class="search-result-meta">شعبة ${s.section}</div></div>
+      <span class="badge ${g.badge}">${avg.toFixed(1)}% · ${g.text}</span></div>`;
+  }).join('');
+  resultsEl.classList.add('active');
+}
+
+function highlightMatch(name, query) {
+  if (!query) return name;
+  const idx = name.indexOf(query);
+  if (idx === -1) return name;
+  return name.substring(0, idx) + '<span style="background:#fef3c7;padding:1px 3px;border-radius:3px;">' + name.substring(idx, idx + query.length) + '</span>' + name.substring(idx + query.length);
+}
+function selectStudent(name) {
+  document.getElementById('searchResults').classList.remove('active');
+  document.getElementById('studentSearch').value = name;
+  showStudentReport(name);
+}
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.search-input-wrap')) document.getElementById('searchResults').classList.remove('active');
+});
+
+// ==================== QR Scanner ====================
+function openQRScanner() {
+  document.getElementById('qrScannerModal').classList.add('active');
+  setTimeout(() => {
+    try {
+      html5QrCode = new Html5Qrcode("qrReader");
+      html5QrCode.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } },
+        (txt) => handleQRResult(txt), () => {}).catch(err => {
+          console.warn(err);
+          document.getElementById('qrReader').innerHTML = '<div style="padding:20px;background:#fef3c7;border-radius:12px;color:#92400e;font-weight:600;">⚠️ تعذّر الوصول للكاميرا.</div>';
+        });
+    } catch (err) { console.warn(err); }
+  }, 200);
+}
+function closeQRScanner() {
+  if (html5QrCode) { html5QrCode.stop().then(() => { html5QrCode.clear(); html5QrCode = null; }).catch(() => { html5QrCode = null; }); }
+  document.getElementById('qrScannerModal').classList.remove('active');
+}
+function scanQRFromFile(file) {
+  if (!file) return;
+  const temp = new Html5Qrcode("qrReader");
+  temp.scanFile(file, true).then(txt => { temp.clear(); handleQRResult(txt); }).catch(err => alert('❌ فشل: ' + err));
+}
+function handleQRResult(txt) {
+  let studentName = txt.trim();
+  if (txt.includes('STU:')) studentName = txt.split('STU:')[1].split('|')[0].trim();
+  else if (txt.includes('الطالب:')) studentName = txt.split('الطالب:')[1].split('\n')[0].trim();
+  else if (txt.includes('|')) studentName = txt.split('|')[0].trim();
+  let student = allStudents.find(s => s.name === studentName);
+  if (!student) student = allStudents.find(s => s.name.includes(studentName));
+  if (!student) {
+    const words = studentName.split(/\s+/).filter(w => w.length > 2);
+    if (words.length > 0) student = allStudents.find(s => words.every(w => s.name.includes(w)));
+  }
+  if (student) { closeQRScanner(); document.getElementById('studentSearch').value = student.name; showStudentReport(student.name); }
+  else alert('❌ لم يتم العثور على الطالب: ' + studentName);
+}
+
+// ==================== تقرير الطالب ====================
+function showStudentReport(name) {
+  const student = allStudents.find(s => s.name === name);
+  if (!student) return;
+  const scores = student.scores;
+  const subjects = Object.keys(scores);
+  const avg = calculateStudentAvg(student);
+  const maxScore = Math.max(...subjects.map(s => scores[s]));
+  const minScore = Math.min(...subjects.map(s => scores[s]));
+  const bestSub = subjects.find(s => scores[s] === maxScore);
+  const worstSub = subjects.find(s => scores[s] === minScore);
+  const weakSubs = subjects.filter(s => scores[s] < 70);
+  const excSubs = subjects.filter(s => scores[s] >= 90);
+  const avgInfo = getGradeInfo(avg);
+  const qrData = `STU:${student.name}|SEC:${student.section}`;
+  const qrId = 'qr_' + Math.random().toString(36).substring(2, 10);
+  const reportId = 'report_' + Math.random().toString(36).substring(2, 10);
+
+  document.getElementById('modalReportContent').innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;flex-wrap:wrap;gap:10px;">
+      <h3 style="color:var(--p);margin:0;">📄 تقرير ${student.name}</h3>
+      <div style="display:flex;gap:8px;">
+        <button class="btn-sm btn-print" onclick="printStudentReport('${name.replace(/'/g, "\\'")}')">🖨️ طباعة</button>
+        <button class="btn-sm btn-pdf" onclick="downloadStudentPDF('${name.replace(/'/g, "\\'")}','${reportId}')">📥 تحميل PDF</button>
+      </div>
+    </div>
+    <div class="student-report" id="${reportId}">
+      <div class="report-header">
+        <h2>🎓 تقرير الطالب الأكاديمي</h2>
+        <p>السنة الدراسية 2024-2025</p>
+      </div>
+      <div class="report-info">
+        <div class="report-info-grid">
+          <div class="info-item"><div class="info-label">اسم الطالب</div><div class="info-value">${student.name}</div></div>
+          <div class="info-item"><div class="info-label">الصف</div><div class="info-value">${student.grade}</div></div>
+          <div class="info-item"><div class="info-label">الشعبة</div><div class="info-value">${student.section}</div></div>
+          <div class="info-item"><div class="info-label">المتوسط العام</div><div class="info-value">${avg.toFixed(1)}%</div></div>
+          <div class="info-item"><div class="info-label">التقدير</div><div class="info-value"><span class="badge ${avgInfo.badge}">${avgInfo.text}</span></div></div>
+        </div>
+        <div class="qr-container">
+          <div id="${qrId}"></div>
+          <div class="qr-label">امسح للتحقق</div>
+        </div>
+      </div>
+      <div class="report-section">
+        <h3>📊 الدرجات حسب المواد</h3>
+        <div class="subject-scores">
+          ${subjects.map(subj => {
+            const score = scores[subj];
+            const g = getGradeInfo(score);
+            return `<div class="subject-score-card ${g.class}">
+              <div class="subject-score-name">${subj}</div>
+              <div class="subject-score-value">${score}</div>
+              <div style="font-size:.7rem;font-weight:700;margin-top:3px;color:var(--g);">${g.text}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="report-section">
+        <h3>📝 التقرير الوصفي</h3>
+        <p>الطالب <strong>${student.name}</strong> في الصف <strong>${student.grade}</strong> شعبة <strong>${student.section}</strong>، حصل على متوسط عام <strong>${avg.toFixed(1)}%</strong> بتقدير <strong>${avgInfo.text}</strong>.</p>
+        <p>${excSubs.length > 0 ? `يتميز في <strong>${excSubs.length}</strong> مادة: ${excSubs.join('، ')}.` : ''}</p>
+        <p>${weakSubs.length > 0 ? `يحتاج إلى دعم في <strong>${weakSubs.length}</strong> مادة: ${weakSubs.join('، ')}.` : '✅ لا يحتاج دعماً إضافياً.'}</p>
+        <p>أفضل مادة: <strong>${bestSub}</strong> (${maxScore}%)، أضعف مادة: <strong>${worstSub}</strong> (${minScore}%).</p>
+      </div>
+      <div class="report-section">
+        <h3>💡 التوصيات</h3>
+        <ul>
+          ${weakSubs.length > 0 ? `<li>التركيز على: ${weakSubs.join('، ')}.</li><li>حضور حصص الدعم بانتظام.</li>` : '<li>الحفاظ على المستوى المتميز.</li>'}
+          <li>تخصيص وقت يومي للمراجعة.</li>
+          <li>المشاركة الفعالة في الأنشطة.</li>
+          ${excSubs.length > 0 ? `<li>تعزيز التفوق في: ${excSubs.join('، ')}.</li>` : ''}
+        </ul>
+      </div>
+    </div>`;
+
+  document.getElementById('studentModal').classList.add('active');
+  setTimeout(() => {
+    const qrEl = document.getElementById(qrId);
+    if (qrEl) {
+      qrEl.innerHTML = '';
+      new QRCode(qrEl, { text: qrData, width: 110, height: 110, colorDark: '#1e3a8a', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+    }
+  }, 150);
+}
+
+function downloadStudentPDF(name, reportId) {
+  const el = document.getElementById(reportId);
+  if (!el) return;
+  html2pdf().set({
+    margin: [8, 8, 8, 8], filename: `تقرير_${name}.pdf`,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff' },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+  }).from(el).save();
+}
+
+function printStudentReport(name) {
+  const content = document.getElementById('modalReportContent');
+  const w = window.open('', '', 'height=800,width=800');
+  w.document.write('<html dir="rtl"><head><title>تقرير ' + name + '</title>');
+  w.document.write('<style>body{font-family:Cairo,Arial;padding:20px;} .subject-scores{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;} .subject-score-card{padding:12px;border:2px solid #ddd;border-radius:10px;text-align:center;} .report-header{text-align:center;border-bottom:3px solid #1e3a8a;padding-bottom:15px;margin-bottom:20px;} .report-info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;} .info-item{padding:10px;background:#f5f5f5;border-radius:8px;} .info-label{font-size:12px;color:#666;} .info-value{font-size:16px;font-weight:bold;} .qr-container{text-align:center;margin:15px 0;} .report-section{margin-bottom:20px;} h3{color:#1e3a8a;border-bottom:2px solid #ddd;padding-bottom:8px;} .badge{padding:4px 10px;border-radius:15px;font-size:11px;font-weight:bold;}.badge-excellent{background:#d1fae5;color:#065f46;}.badge-vgood{background:#dbeafe;color:#1e40af;}.badge-good{background:#fef3c7;color:#92400e;}.badge-acceptable{background:#ffedd5;color:#9a3412;}.badge-weak{background:#fee2e2;color:#991b1b;}</style>');
+  w.document.write('</head><body>');
+  w.document.write(content.innerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  setTimeout(() => { w.print(); }, 500);
+}
+
+// ============================================================
+// ==========  تصدير PDF الاحترافي لـ A4  ====================
+// ============================================================
+
+/**
+ * يعرض نافذة تحميل
+ */
+function showPdfLoading(msg) {
+  const loading = document.createElement('div');
+  loading.className = 'pdf-loading';
+  loading.id = 'pdfLoadingOverlay';
+  loading.innerHTML = `
+    <div class="pdf-loading-content">
+      <div class="spinner"></div>
+      <p>${msg || '⏳ جاري تجهيز PDF...'}</p>
+      <small>الرجاء الانتظار حتى تكتمل العملية</small>
+    </div>`;
+  document.body.appendChild(loading);
+}
+function hidePdfLoading() {
+  const el = document.getElementById('pdfLoadingOverlay');
+  if (el) el.remove();
+}
+
+/**
+ * يحوّل الرسوم البيانية إلى صور ثابتة
+ */
+function convertChartsToImages(sourceEl, targetEl) {
+  const srcCanvases = sourceEl.querySelectorAll('canvas');
+  const tgtCanvases = targetEl.querySelectorAll('canvas');
+  tgtCanvases.forEach((tgtCanvas, idx) => {
+    const srcCanvas = srcCanvases[idx];
+    if (!srcCanvas) return;
+    try {
+      const img = document.createElement('img');
+      img.src = srcCanvas.toDataURL('image/png', 1.0);
+      img.style.cssText = 'max-width:100%;height:auto;max-height:260px;display:block;margin:0 auto;';
+      tgtCanvas.parentNode.replaceChild(img, tgtCanvas);
+    } catch (e) { console.warn('chart conversion failed', e); }
+  });
+}
+
+/**
+ * ينشئ رأس PDF موحد
+ */
+function buildPdfHeader(title, subtitle) {
+  return `
+    <h1>${title}</h1>
+    <div class="pdf-meta">${subtitle}</div>`;
+}
+
+/**
+ * التصدير الرئيسي: يحوّل أي كرت تقرير إلى PDF بمقاس A4
+ */
+async function exportCardToPDF(cardId, filename) {
+  const sourceCard = document.getElementById(cardId);
+  if (!sourceCard) return;
+
+  showPdfLoading('⏳ جاري تجهيز PDF...');
+
+  try {
+    // Clone المحتوى
+    const clone = sourceCard.cloneNode(true);
+    clone.querySelectorAll('.card-actions, .btn-sm, .btn, .search-box, .toolbar').forEach(e => e.remove());
+
+    // إنشاء الـ wrapper بمقاس A4
+    const wrapper = document.createElement('div');
+    wrapper.className = 'pdf-wrapper';
+
+    // إنشاء محتوى التقرير
+    const content = document.createElement('div');
+    content.className = 'pdf-report-content';
+
+    // رأس موحد
+    const titles = {
+      'avgCard': { t: '📊 تقرير متوسط التحصيل والنجاح', s: `الصف التاسع · ${allStudents.length} طالب · ${SUBJECTS.length} مادة · ${new Date().toLocaleDateString('ar-EG')}` },
+      'weakCard': { t: '⚠️ تقرير الطلاب الضعاف واحتياجاتهم', s: `عدد الطلاب المحتاجين للدعم: ${allStudents.filter(st => calculateStudentAvg(st) < 70).length} من أصل ${allStudents.length} · ${new Date().toLocaleDateString('ar-EG')}` },
+      'needsCard': { t: '📋 التقرير الشامل بالاحتياجات', s: `الصف التاسع · ${allStudents.length} طالب · ${SUBJECTS.length} مادة · ${new Date().toLocaleDateString('ar-EG')}` },
+      'planCard': { t: '🎯 خطة رفع مخرجات التعلم', s: `الصف التاسع · السنة الدراسية 2024-2025 · ${new Date().toLocaleDateString('ar-EG')}` }
+    };
+    const meta = titles[cardId] || { t: '📄 تقرير', s: new Date().toLocaleDateString('ar-EG') };
+
+    content.innerHTML = buildPdfHeader(meta.t, meta.s);
+    wrapper.appendChild(content);
+
+    // نقل محتوى الكرت (بعد إزالة الرأس الأصلي)
+    const cardHeader = clone.querySelector('.card-header');
+    if (cardHeader) cardHeader.remove();
+
+    content.innerHTML += clone.innerHTML;
+
+    // تحويل الرسوم البيانية إلى صور
+    convertChartsToImages(sourceCard, content);
+
+    // معالجة الجداول: تكرار الرأس عند الانقسام
+    content.querySelectorAll('table').forEach(table => {
+      const thead = table.querySelector('thead');
+      if (thead && thead.querySelector('tr')) {
+        thead.style.display = 'table-header-group';
+        thead.querySelectorAll('tr').forEach(tr => { tr.style.pageBreakInside = 'avoid'; });
+      }
+      table.querySelectorAll('tbody tr').forEach(tr => {
+        tr.style.pageBreakInside = 'avoid';
+      });
+    });
+
+    // وضع في حاوية مخفية
+    const hiddenContainer = document.createElement('div');
+    hiddenContainer.style.cssText = 'position:fixed;left:-99999px;top:0;width:794px;background:#fff;';
+    hiddenContainer.appendChild(wrapper);
+    document.body.appendChild(hiddenContainer);
+
+    // انتظار الصور والخطوط
+    await new Promise(r => setTimeout(r, 600));
+
+    // خيارات html2pdf
+    const opt = {
+      margin: [12, 10, 14, 10],
+      filename: `${filename}_${new Date().toISOString().split('T')[0]}.pdf`,
+      image: { type: 'jpeg', quality: 0.96 },
+      html2canvas: {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        width: 794,
+        windowWidth: 794,
+        scrollX: 0,
+        scrollY: 0,
+        logging: false
+      },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+      pagebreak: {
+        mode: ['css', 'legacy'],
+        avoid: ['tr', '.weak-student-card', '.stat-card', '.chart-container', '.pdf-note', 'h2', 'h3']
+      }
+    };
+
+    await html2pdf().set(opt).from(wrapper).save();
+    hiddenContainer.remove();
+  } catch (err) {
+    console.error(err);
+    alert('❌ حدث خطأ أثناء التصدير: ' + err.message);
+  } finally {
+    hidePdfLoading();
+  }
+}
+
+// ============================================================
+// ==========  تصدير جميع تقارير الطلاب PDF  ====================
+// ============================================================
+async function generateAllReportsPDF() {
+  if (allStudents.length === 0) { alert('لا توجد بيانات'); return; }
+  if (!confirm(`سيتم تصدير ${allStudents.length} تقرير كملف PDF. متابعة؟`)) return;
+
+  showPdfLoading(`⏳ جاري تجهيز ${allStudents.length} تقرير...`);
+
+  const pdfContainer = document.createElement('div');
+  pdfContainer.id = 'pdfAllReportsContainer';
+  pdfContainer.style.cssText = 'position:fixed;left:-99999px;top:0;width:794px;background:#fff;';
+  const qrPromises = [];
+
+  allStudents.forEach((st, idx) => {
+    const scores = st.scores;
+    const subjects = Object.keys(scores);
+    const avg = calculateStudentAvg(st);
+    const avgInfo = getGradeInfo(avg);
+    const weakSubs = subjects.filter(s => scores[s] < 70);
+    const excSubs = subjects.filter(s => scores[s] >= 90);
+    const qrData = `STU:${st.name}|SEC:${st.section}`;
+    const qrId = `pdfQR_${idx}_${Math.random().toString(36).substring(2,6)}`;
+
+    const page = document.createElement('div');
+    page.className = 'pdf-page';
+    page.innerHTML = `
+      <div class="pdf-header">
+        <h2>🎓 تقرير الطالب الأكاديمي</h2>
+        <p>السنة الدراسية 2024-2025</p>
+      </div>
+      <div class="pdf-info-grid">
+        <div class="pdf-info-item"><div class="pdf-info-label">اسم الطالب</div><div class="pdf-info-value">${st.name}</div></div>
+        <div class="pdf-info-item"><div class="pdf-info-label">الصف</div><div class="pdf-info-value">${st.grade}</div></div>
+        <div class="pdf-info-item"><div class="pdf-info-label">الشعبة</div><div class="pdf-info-value">${st.section}</div></div>
+        <div class="pdf-info-item"><div class="pdf-info-label">المتوسط</div><div class="pdf-info-value">${avg.toFixed(1)}% (${avgInfo.text})</div></div>
+      </div>
+      <div class="pdf-section">
+        <h3>📊 الدرجات حسب المواد</h3>
+        <div class="pdf-subjects-grid">
+          ${subjects.map(subj => {
+            const score = scores[subj];
+            const g = getGradeInfo(score);
+            return `<div class="pdf-subject-card ${g.class}">
+              <div class="pdf-subject-name">${subj}</div>
+              <div class="pdf-subject-value">${score}</div>
+              <div style="font-size:5.5pt;font-weight:700;color:#64748b;">${g.text}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="pdf-section">
+        <h3>📝 التقرير الوصفي</h3>
+        <p>الطالب <b>${st.name}</b> في الصف <b>${st.grade}</b> شعبة <b>${st.section}</b>، حصل على متوسط عام <b>${avg.toFixed(1)}%</b> بتقدير <b>${avgInfo.text}</b>.</p>
+        ${excSubs.length > 0 ? `<p>⭐ يتميز في: <b>${excSubs.join('، ')}</b>.</p>` : ''}
+        ${weakSubs.length > 0 ? `<p style="color:#dc2626;">⚠️ يحتاج دعم في: <b>${weakSubs.join('، ')}</b>.</p>` : '<p style="color:#10b981;">✅ لا يحتاج دعماً إضافياً.</p>'}
+      </div>
+      <div class="pdf-section">
+        <h3>💡 التوصيات</h3>
+        <ul>
+          ${weakSubs.length > 0 ? `<li>التركيز على: ${weakSubs.join('، ')}.</li><li>حضور حصص الدعم بانتظام.</li>` : '<li>الحفاظ على المستوى المتميز.</li>'}
+          <li>تخصيص وقت يومي للمراجعة.</li>
+          <li>المشاركة الفعالة في الأنشطة.</li>
+        </ul>
+      </div>
+      <div class="pdf-qr">
+        <div id="${qrId}" style="display:inline-block;"></div>
+        <div style="font-size:7pt;color:#64748b;margin-top:1.5mm;font-weight:600;">امسح للتحقق</div>
+      </div>
+      <div class="pdf-footer">نظام تحليل نتائج الطلاب · ${new Date().toLocaleDateString('ar-EG')} · صفحة ${idx + 1} من ${allStudents.length}</div>`;
+    pdfContainer.appendChild(page);
+
+    qrPromises.push(new Promise(resolve => {
+      setTimeout(() => {
+        const qrEl = document.getElementById(qrId);
+        if (qrEl) new QRCode(qrEl, { text: qrData, width: 70, height: 70, colorDark: '#1e3a8a', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+        resolve();
+      }, 15);
+    }));
+  });
+
+  document.body.appendChild(pdfContainer);
+  await Promise.all(qrPromises);
+  await new Promise(r => setTimeout(r, 800));
+
+  const opt = {
+    margin: [8, 8, 8, 8],
+    filename: `تقارير_جميع_الطلاب_${new Date().toISOString().split('T')[0]}.pdf`,
+    image: { type: 'jpeg', quality: 0.95 },
+    html2canvas: { scale: 2, useCORS: true, backgroundColor: '#ffffff', width: 794, windowWidth: 794 },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['css'], after: '.pdf-page' }
+  };
+
+  try {
+    await html2pdf().set(opt).from(pdfContainer).save();
+  } catch (err) {
+    console.error(err);
+    alert('❌ حدث خطأ أثناء التصدير');
+  } finally {
+    pdfContainer.remove();
+    hidePdfLoading();
+  }
+}
+
+// ==================== 4. الاحتياجات ====================
+function updateNeeds() {
+  if (currentData.length === 0) return;
+  const subjectMap = {};
+  currentData.forEach(r => {
+    if (!subjectMap[r.subject]) subjectMap[r.subject] = { a: [], total: 0, pass: 0 };
+    subjectMap[r.subject].a.push(r.achieve);
+    subjectMap[r.subject].total++;
+    if (r.achieve >= 50) subjectMap[r.subject].pass++;
+  });
+  const subjectStats = Object.keys(subjectMap).map(subj => {
+    const a = subjectMap[subj].a;
+    const avgA = a.reduce((x,y) => x+y, 0) / a.length;
+    const succRate = (subjectMap[subj].pass / subjectMap[subj].total) * 100;
+    return { subject: subj, avgAchieve: avgA, successRate: succRate, gap: succRate - avgA, count: a.length };
+  }).sort((a,b) => b.gap - a.gap);
+
+  const highGap = subjectStats.slice(0, 3);
+  const lowA = [...subjectStats].sort((a,b) => a.avgAchieve - b.avgAchieve).slice(0, 3);
+  const weakCount = allStudents.filter(st => calculateStudentAvg(st) < 70).length;
+
+  document.getElementById('needsContent').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat-card danger"><div class="stat-value">${weakCount}</div><div class="stat-label">طالب يحتاج دعماً</div></div>
+      <div class="stat-card warning"><div class="stat-value">${subjectStats.filter(s => s.avgAchieve < 70).length}</div><div class="stat-label">مواد بمتوسط منخفض</div></div>
+      <div class="stat-card"><div class="stat-value">${SUBJECTS.length}</div><div class="stat-label">إجمالي المواد</div></div>
+      <div class="stat-card"><div class="stat-value">${allStudents.length}</div><div class="stat-label">إجمالي الطلاب</div></div>
+    </div>
+    <h3 style="color:var(--p);margin:22px 0 12px;">🔴 المواد ذات الفجوة الكبرى (نجاح مرتفع / تحصيل منخفض)</h3>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>المادة</th><th>متوسط التحصيل</th><th>التقييم</th><th>نسبة النجاح</th><th>الفجوة</th><th>الأولوية</th></tr></thead>
+      <tbody>${highGap.map(s => {
+        const g = getGradeInfo(s.avgAchieve);
+        return `<tr><td><strong>${s.subject}</strong></td><td>${s.avgAchieve.toFixed(1)}%</td>
+          <td><span class="badge ${g.badge}">${g.text}</span></td>
+          <td>${s.successRate.toFixed(1)}%</td>
+          <td style="color:#ef4444;font-weight:700;">${s.gap.toFixed(1)}%</td>
+          <td><span class="badge badge-danger">عالية</span></td></tr>`;
+      }).join('')}</tbody>
+    </table></div>
+    <h3 style="color:var(--p);margin:22px 0 12px;">🟠 المواد ذات التحصيل الأدنى</h3>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>المادة</th><th>متوسط التحصيل</th><th>التقييم</th><th>عدد الطلاب</th><th>الأولوية</th></tr></thead>
+      <tbody>${lowA.map(s => {
+        const g = getGradeInfo(s.avgAchieve);
+        return `<tr><td><strong>${s.subject}</strong></td><td>${s.avgAchieve.toFixed(1)}%</td>
+          <td><span class="badge ${g.badge}">${g.text}</span></td>
+          <td>${s.count}</td>
+          <td><span class="badge badge-warning">متوسطة</span></td></tr>`;
+      }).join('')}</tbody>
+    </table></div>
+    <h3 style="color:var(--p);margin:22px 0 12px;">📌 الاحتياجات العامة</h3>
+    <ul style="line-height:2;font-size:1rem;">
+      <li><strong>تحسين جودة التقويم:</strong> أدوات تقويم تركز على الفهم والتطبيق.</li>
+      <li><strong>التدخل المبكر:</strong> دعم فوري لـ ${weakCount} طالب.</li>
+      <li><strong>التطوير المهني:</strong> ورش عمل في استراتيجيات التدريس النشط.</li>
+      <li><strong>حصص الدعم:</strong> تخصيص حصص إضافية في: ${lowA.map(s => s.subject).join('، ')}.</li>
+      <li><strong>المتابعة الدورية:</strong> قياس أثر التدخل بعد كل تقرير.</li>
+      <li><strong>الشراكة مع الأسرة:</strong> إشراك أولياء الأمور.</li>
+      <li><strong>التحفيز:</strong> برامج تحفيزية للطلاب المتفوقين.</li>
+    </ul>
+    <div class="pdf-note"><strong>💡 الخلاصة:</strong> التركيز على ${lowA.length} مواد أساسية، ودعم ${weakCount} طالب، مع تطوير أدوات التقويم.</div>`;
+}
+
+// ==================== 5. الخطة ====================
+function updatePlan() {
+  if (currentData.length === 0) return;
+  const subjectMap = {};
+  currentData.forEach(r => {
+    if (!subjectMap[r.subject]) subjectMap[r.subject] = [];
+    subjectMap[r.subject].push(r.achieve);
+  });
+  const lowSubs = Object.keys(subjectMap).map(s => ({
+    subject: s,
+    avg: subjectMap[s].reduce((a,b) => a+b, 0) / subjectMap[s].length
+  })).sort((a,b) => a.avg - b.avg).slice(0, 4);
+
+  document.getElementById('planContent').innerHTML = `
+    <h3 style="color:var(--p);margin-bottom:12px;">🎯 الأهداف</h3>
+    <ul style="line-height:2;">
+      <li>رفع متوسط التحصيل العام بنسبة <strong>10%</strong> خلال فصل دراسي.</li>
+      <li>تقليص الفجوة بين النجاح والتحصيل إلى أقل من <strong>10%</strong>.</li>
+      <li>رفع مستوى <strong>80%</strong> من الطلاب الضعاف والمقبولين إلى المستوى الجيد.</li>
+      <li>تحسين تحصيل: <strong>${lowSubs.map(s => s.subject).join('، ')}</strong>.</li>
+    </ul>
+    <h3 style="color:var(--p);margin:22px 0 12px;">📋 الإجراءات التنفيذية</h3>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>المجال</th><th>الإجراء</th><th>المسؤول</th><th>المدة</th><th>مؤشر النجاح</th></tr></thead>
+      <tbody>
+        <tr><td>التدريس</td><td>تطبيق استراتيجيات التعلم النشط</td><td>المعلمون</td><td>أسبوعي</td><td>تحسن 10%</td></tr>
+        <tr><td>التقويم</td><td>بناء اختبارات تعتمد على الفهم</td><td>لجان المواد</td><td>شهري</td><td>انخفاض الفجوة 5%</td></tr>
+        <tr><td>الدعم</td><td>حصص دعم إضافية للضعاف والمقبولين</td><td>معلمو الدعم</td><td>أسبوعي</td><td>ارتفاع 15%</td></tr>
+        <tr><td>التطوير المهني</td><td>ورش عمل في التقويم التكويني</td><td>قسم التطوير</td><td>شهري</td><td>تقرير حضور</td></tr>
+        <tr><td>المتابعة</td><td>تحليل بيانات التقارير ومقارنة الأداء</td><td>فريق الجودة</td><td>نهاية كل تقرير</td><td>تقرير تحليلي</td></tr>
+      </tbody>
+    </table></div>
+    <h3 style="color:var(--p);margin:22px 0 12px;">📅 الجدول الزمني</h3>
+    <div class="table-wrapper"><table>
+      <thead><tr><th>المرحلة</th><th>المدة</th><th>الأنشطة</th></tr></thead>
+      <tbody>
+        <tr><td>التحليل والتخطيط</td><td>الأسبوع 1-2</td><td>تحليل الوضع، تحديد الطلاب المستهدفين، تشكيل فرق الدعم</td></tr>
+        <tr><td>التنفيذ</td><td>الأسبوع 3-6</td><td>تنفيذ الحصص العلاجية، ورش المعلمين، متابعة أسبوعية</td></tr>
+        <tr><td>التقويم</td><td>الأسبوع 7-10</td><td>تقويم تكويني، تحليل النتائج، تعديل الخطة</td></tr>
+        <tr><td>القياس</td><td>الأسبوع 11-14</td><td>تقويم ختامي، قياس الأثر، إعداد التقرير النهائي</td></tr>
+      </tbody>
+    </table></div>
+    <h3 style="color:var(--p);margin:22px 0 12px;">📊 مؤشرات الأداء (KPIs)</h3>
+    <ul style="line-height:2;">
+      <li>نسبة التحصيل العام ≥ 85%.</li>
+      <li>الفجوة بين النجاح والتحصيل ≤ 8%.</li>
+      <li>نسبة الطلاب الحاصلين على "جيد" أو أعلى ≥ 70%.</li>
+      <li>رضا المعلمين ≥ 80%.</li>
+      <li>تحسن نتائج 80% من الطلاب الضعاف والمقبولين.</li>
+    </ul>
+    <div class="pdf-note success"><strong>✅ ملاحظة:</strong> الخطة مرنة وتُراجع بعد كل تقرير.</div>`;
+}
+
+// ==================== الطباعة و Excel ====================
+function printCard(cardId) {
+  const el = document.getElementById(cardId);
+  if (!el) return;
+  const w = window.open('', '', 'height=800,width=1000');
+  w.document.write('<html dir="rtl"><head><title>طباعة</title>');
+  w.document.write('<style>@page{size:A4;margin:15mm;} body{font-family:Cairo,Arial;padding:0;} table{width:100%;border-collapse:collapse;margin:10px 0;page-break-inside:auto;} thead{display:table-header-group;} tr{page-break-inside:avoid;} th{background:#1e3a8a!important;color:white!important;padding:8px;font-size:11px;-webkit-print-color-adjust:exact;print-color-adjust:exact;} td{padding:6px;border-bottom:1px solid #ddd;text-align:center;font-size:10px;} .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0;page-break-inside:avoid;} .stat-card{padding:10px;border:1.5px solid #ddd;border-radius:8px;text-align:center;} .stat-value{font-size:20px;font-weight:bold;color:#1e3a8a;} .stat-label{font-size:9px;color:#666;} .badge{padding:3px 8px;border-radius:12px;font-size:9px;font-weight:bold;display:inline-block;} .badge-excellent{background:#d1fae5;color:#065f46;}.badge-vgood{background:#dbeafe;color:#1e40af;}.badge-good{background:#fef3c7;color:#92400e;}.badge-acceptable{background:#ffedd5;color:#9a3412;}.badge-weak{background:#fee2e2;color:#991b1b;}.badge-info{background:#dbeafe;color:#1e40af;}.badge-danger{background:#fee2e2;color:#991b1b;}.badge-warning{background:#fef3c7;color:#92400e;} .chart-container,.btn-sm,.card-actions,.search-box{display:none!important;} h1{color:#1e3a8a;text-align:center;font-size:18px;border-bottom:2px solid #1e3a8a;padding-bottom:8px;} h2,h3{color:#1e3a8a;page-break-after:avoid;}.weak-student-card{page-break-inside:avoid;padding:8px;border:1px solid #fecaca;border-radius:8px;margin-bottom:6px;}</style>');
+  w.document.write('</head><body>');
+  const clone = el.cloneNode(true);
+  clone.querySelectorAll('.chart-container,.card-actions,.search-box').forEach(c => c.remove());
+  const ch = clone.querySelector('.card-header');
+  if (ch) ch.remove();
+  w.document.write(clone.innerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  setTimeout(() => { w.print(); }, 500);
+}
+
+function exportTableToExcel(tableId, filename) {
+  const table = document.getElementById(tableId);
+  if (!table) return;
+  const wb = XLSX.utils.table_to_book(table, { sheet: 'البيانات' });
+  XLSX.writeFile(wb, filename + '.xlsx');
+}
+
+// ==================== التهيئة ====================
+function initAll() {
+  document.getElementById('studentCount').textContent = allStudents.length;
+  document.getElementById('subjectCount').textContent = SUBJECTS.length;
+  updateAverages();
+  updateWeakStudents();
+  updateNeeds();
+  updatePlan();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  loadEmbeddedData();
+  initAll();
+  showStatus(`✅ تم تحميل بيانات الصف التاسع المدمجة\n👥 ${allStudents.length} طالب · 📚 ${SUBJECTS.length} مادة · 📄 ${currentData.length} سجل`, 'success');
+  setTimeout(() => showCard('avgCard', document.querySelector('.btn-avg')), 200);
+});
+
+document.getElementById('studentModal').addEventListener('click', (e) => { if (e.target.id === 'studentModal') closeModal(); });
+document.getElementById('qrScannerModal').addEventListener('click', (e) => { if (e.target.id === 'qrScannerModal') closeQRScanner(); });
+</script>
+</body>
+</html>
