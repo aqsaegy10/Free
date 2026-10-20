@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- سياسة أمان المحتوى لمنع الاختراقات (CSP) -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
+    <title>المساعد الذكي للدعم الفني - وزارة التربية والتعليم</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --maroon: #7a1230;
+            --maroon-light: #a51e46;
+            --gold: #b9a87a;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-main: #2c3e50;
+            --text-muted: #6c757d;
+            --success: #28a745;
+            --border-radius: 12px;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.06);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--maroon), var(--maroon-light));
+            color: white;
+            padding: 1.5rem 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 800;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* Main Container */
+        main {
+            flex: 1;
+            max-width: 1100px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+            width: 100%;
+        }
+
+        /* Search Section */
+        .search-section {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .search-section h2 {
+            color: var(--maroon);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 1rem 1.2rem;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--maroon);
+            box-shadow: 0 0 0 3px rgba(122, 18, 48, 0.15);
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--maroon);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--maroon-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #eef2f5;
+            color: var(--maroon);
+            border: 1px solid #d1d9e0;
+        }
+
+        .btn-secondary:hover {
+            background: #dfe6ed;
+        }
+
+        /* Results Container */
+        .results-container {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .results-container.active {
+            display: block;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.5rem;
+            border-right: 5px solid var(--maroon);
+        }
+
+        .card-title {
+            color: var(--maroon);
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            font-size: 1rem;
+            color: #444;
+            white-space: pre-wrap; /* Preserve line breaks */
+        }
+
+        .card-footer {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px dashed #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .tag {
+            background: var(--gold);
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+
+        /* AI Assistant Box */
+        .ai-box {
+            background: #fff9e6;
+            border: 1px solid #ffeeba;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-right: 5px solid #ffc107;
+        }
+
+        .ai-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 1rem;
+            color: #856404;
+            font-weight: bold;
+        }
+
+        .ai-content {
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .ai-loading {
+            display: none;
+            margin-top: 10px;
+            color: var(--maroon);
+            font-weight: bold;
+        }
+
+        .ai-loading.active {
+            display: block;
+        }
+
+        .dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--maroon);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        .dot:nth-child(2) { animation-delay: 0.2s; }
+        .dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(0.8); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 1; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Online Search */
+        .online-search {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+            .card-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+        }
+        .empty-state svg {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🤖 المساعد الذكي للدعم الفني</h1>
+        <p>وزارة التربية والتعليم والتعليم العالي - إدارة نظم المعلومات</p>
+    </header>
+
+    <main>
+        <section class="search-section">
+            <h2>كيف يمكننا مساعدتك اليوم؟</h2>
+            <p style="color: var(--text-muted); margin-bottom: 1.5rem;">اكتب مشكلتك التقنية وسنقوم بالبحث في الأدلة الإجرائية والمستندات الرسمية لتقديم الحل.</p>
+            
+            <div class="input-group">
+                <input type="text" id="searchInput" placeholder="مثال: لا يعمل برنامج ساعد، أو كيف أغير كلمة مرور تواصل..." aria-label="وصف المشكلة" autocomplete="off" maxlength="200">
+                <button class="btn btn-primary" id="searchBtn" onclick="handleSearch()">
+                    🔍 بحث
+                </button>
+            </div>
+            <div id="errorMsg" style="color: red; margin-top: 10px; font-size: 0.9rem; display: none;"></div>
+        </section>
+
+        <div id="resultsContainer" class="results-container">
+            <!-- AI Card -->
+            <div id="aiCard" class="ai-box" style="display: none;">
+                <div class="ai-header">
+                    <span>✨ المساعد الذكي (AI)</span>
+                </div>
+                <div id="aiContent" class="ai-content">
+                    جاري تحليل المشكلة...
+                </div>
+                <div id="aiLoading" class="ai-loading">
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                    <span class="dot"></span>
+                </div>
+            </div>
+
+            <!-- Local Knowledge Base Results -->
+            <h3 id="resultTitle" style="color: var(--maroon); margin-bottom: 1rem; display: none;">الحلول المقترحة من الأدلة الرسمية:</h3>
+            <div id="kbResults"></div>
+        </div>
+
+        <!-- Online Search Section -->
+        <div id="onlineSearchSection" class="online-search" style="display: none;">
+            <h3 style="color: var(--maroon); margin-bottom: 1rem;">لم تجد الحل المناسب؟</h3>
+            <p style="margin-bottom: 1rem; color: var(--text-muted);">يمكنك توسيع نطاق البحث عبر الإنترنت للحصول على حلول إضافية.</p>
+            <button class="btn btn-secondary" id="onlineSearchBtn" onclick="searchOnline()">
+                🌐 البحث في الإنترنت
+            </button>
+        </div>
+    </main>
+
+    <script>
+        /**
+         * قاعدة المعرفة (Knowledge Base)
+         * مستخرجة من الملفات المرفقة (PDF/Doc)
+         */
+        const knowledgeBase = [
+            {
+                keywords: ["ساعد", "saaed", "بلاغ", "طلب"],
+                title: "منصة ساعد - فتح بلاغ أو طلب خدمة",
+                solution: "1. الدخول إلى منصة ساعد عبر الرابط (https://saaed.edu.gov.qa/).\n2. اختيار 'School Incidents' للإبلاغ عن عطل فني، أو 'School Requests' لطلب أجهزة/صلاحيات.\n3. تعبئة الحقول: العنوان، الوصف الدقيق، ذكر الجهاز المتأثر (مثل IP أو Asset Tag)، وإرفاق صورة توضيحية.\n4. تحويل البلاغ للجهة الصحيحة (مثل دعم QCS للابتوبات، أو Mannai للطابعات).\nملاحظة: حتى المشاكل التي تحل بالمدرسة يجب تسجيلها في ساعد.",
+                source: "دليل استخدام نظام ساعد / الدليل الإجرائي"
+            },
+            {
+                keywords: ["تواصل", "tawasol", "كلمة المرور", "مراسلات", "تغيير باسورد"],
+                title: "نظام تواصل - تغيير كلمة المرور أو استرجاعها",
+                solution: "لتغيير كلمة المرور:\n1. من الشاشة الرئيسية، انقر على اسم المستخدم في الزاوية العليا.\n2. اختر 'تغيير كلمة المرور'.\n3. أدخل كلمة المرور القديمة، ثم الجديدة وتأكيدها.\n\nفي حال نسيان كلمة المرور أو إغلاق الحساب:\nيجب الدخول لمنصة 'ساعد' وفتح تذكرة في قسم 'طلب صلاحيات نظام NSIS' أو 'HR'، وإرفاق النموذج المعتمد لاستعادة الحساب.",
+                source: "دليل مدير نظام تواصل"
+            },
+            {
+                keywords: ["شبكة", "انترنت", "نت", "واي فاي", "wifi", "بطء", "network"],
+                title: "أعطال الشبكة والإنترنت",
+                solution: "1. تأكد من أن كابل الإيثرنت موصول بإحكام أو أن الواي فاي متصل.\n2. تحقق من أضواء أجهزة الشبكة (Core Switch, APs) في غرفة الخوادم: يجب أن تكون خضراء مستقرة.\n3. قم بإجراء اختبار Ping (مثلاً: ping google.com) وأرفق النتيجة في التذكرة.\n4. إذا كان العطل عاماً، تواصل مع مزود الخدمة (Ooredoo) عبر فتح تذكرة في 'ساعد' مع ذكر MAC Address أو IP.",
+                source: "School Network Guideline"
+            },
+            {
+                keywords: ["bitlocker", "تشفير", "بيت لوكر", "كلمة سر القرص"],
+                title: "استعادة مفتاح تشفير BitLocker",
+                solution: "إذا كان القرص مشفراً وتظهر شاشة تطلب مفتاح الاسترداد:\n1. من أي جهاز آخر، توجه إلى حساب Microsoft: https://account.microsoft.com/devices/recoverykey\n2. قم بتسجيل الدخول بحساب الوزارة (edu.gov.qa).\n3. اختر الجهاز من القائمة واضغط على 'View BitLocker Keys'.\n4. استخدم المفتاح لفتح الجهاز.\n(تنبيه: تأكد من عمل فورمات للجهاز قبل تسليمه للاستبدال).",
+                source: "Disk Encryption Key Recovery Memo"
+            },
+            {
+                keywords: ["netSupport", "معمل", "حاسب", "طالب", "شاشة سوداء"],
+                title: "مشاكل برنامج NetSupport في المعامل",
+                solution: "1. إذا ظهرت شاشة سوداء للطالب: تأكد من اختيار 'Room' الصحيح في إعدادات المعلم (مثلاً LAB1).\n2. إذا لم يتصل الجهاز: أعد تشغيل جهاز الطالب، أو استخدم أمر (GPUpdate/force) من حساب HD.\n3. لنسخ إعدادات معمل لآخر: انسخ ملف Client32.ini من جهاز طالب في المعمل الجديد إلى القديم.\n4. لإيقاف خاصية Sleep للطلاب: من Control Panel > Power Options اختر 'Do Nothing' لزر Sleep.",
+                source: "مشاكل شائعة لبرنامج NetSupport"
+            },
+            {
+                keywords: ["أرشفة", "archiving", "archive", "IE mode", "متصفح"],
+                title: "نظام الأرشفة الإلكترونية لا يفتح",
+                solution: "1. افتح Control Panel > Credential Manager > Windows Credentials.\n2. أضف بيانات الدخول: Internet address (archive.edu.gov.qa)، Username (QESC\\School Account)، Password.\n3. افتح متصفح Edge، واذهب للإعدادات > المتصفح الافتراضي (Default browser).\n4. في خيار (Internet Explorer compatibility)، أضف الرابط: https://archive.edu.gov.qa/Default.aspx واختر 'Allow'.",
+                source: "Archiving System Settings"
+            },
+            {
+                keywords: ["asset", "أصول", "عهد", "باركود", "طابعة باركود", "zebra"],
+                title: "إعدادات نظام الأصول والعهد (Asset Tracking)",
+                solution: "1. يجب تثبيت .NET Framework (يمكن تحميله من Software Center).\n2. إعدادات طابعة Zebra: من Printer Properties > Preferences، اجعل Speed و Darkness على أعلى مستوى، وحدد حجم الورق 50.80mm x 25.40mm.\n3. يجب تشغيل النظام عبر متصفح Edge في وضع IE Mode، وإضافة الرابط: https://asset.edu.gov.qa/Default.aspx\n4. لطباعة الباركود، قم بتحميل وتثبيت (SMMPRintActiveX) عند الضغط على Print Labels.",
+                source: "Asset Tracking Settings Guide"
+            },
+            {
+                keywords: ["HR", "موارد بشرية", "erp", "جافا", "java"],
+                title: "نظام الموارد البشرية (HR) لا يعمل",
+                solution: "1. تأكد من تثبيت Java 8 Update 251.\n2. من إعدادات Java (Configure Java)، اذهب إلى Security > Edit Site List.\n3. أضف الروابط التالية: http://hr.edu.gov.qa و https://erp.edu.gov.qa\n4. شغل اختصار (HR) الموجود على سطح المكتب، وعند ظهور رسالة أمان Java اختر 'Run'.",
+                source: "HR & ERP Settings for gov"
+            },
+            {
+                keywords: ["مروح", "بروجكتر", "epson", "عرض", "شاشة", "تفاعلي"],
+                title: "تشغيل جهاز العرض التفاعلي Epson",
+                solution: "1. قم بتوصيل كابلات HDMI و USB من اللابتوب إلى منفذ الحائط.\n2. اضغط على زر الطاقة في الريموت.\n3. إذا لم تظهر الشاشة، اضغط على زر 'Home' في الريموت واختر 'HDMI'.\n4. لتفعيل القلم: اضغط على أيقونة القلم في أسفل السبورة، أو زر القلم نفسه لفتح لوحة الكتابة وتغيير الألوان.",
+                source: "Epson Projector Guide"
+            },
+            {
+                keywords: ["OneDrive", "ون درايف", "ملفات", "مشاركة", "استرجاع"],
+                title: "كيفية استخدام واسترجاع ملفات OneDrive",
+                solution: "1. للوصول للتطبيق: اضغط على أيقونة السحابة بجانب الساعة في شريط المهام.\n2. لمشاركة ملف: اضغط كليك يمين > Share، وأدخل بريد الشخص.\n3. لاسترجاع ملف محذوف: افتح التطبيق، اختر Recycle bin، وحدد الملف ثم Restore (متاح لمدة 30 يوماً).\n4. لاسترجاع نسخة قديمة: كليك يمين على الملف > Version history.",
+                source: "OneDrive Guide"
+            },
+            {
+                keywords: ["ITL", "cisco", "هاتف", "تليفون", "شبكة الهاتف"],
+                title: "مسح ملف ITL من هواتف Cisco",
+                solution: "1. اضغط على زر Settings في الهاتف.\n2. اذهب إلى Security Configuration > Trust List > ITL File.\n3. استخدم كود فتح القفل (Star, Star, Pound).\n4. اختر ITL File ثم اضغط More ثم Erase. سيقوم الهاتف بإعادة التشغيل ومسح الملف.",
+                source: "ITL Erase Guide"
+            },
+            {
+                keywords: ["مسح", "بيانات", "wipe", "نظام", "فورمات", "dell", "lenovo"],
+                title: "مسح بيانات الأجهزة القديمة (Clear Data)",
+                solution: "1. لأجهزة Dell: ادخل للـ BIOS عبر F2، اختر Maintenance > Data Wipe، وفعل خيار Wipe on Next Boot.\n2. لأجهزة Lenovo: ادخل BIOS عبر F1، اذهب لـ Security، اضبط Hard Disk Password أولاً، ثم اختر Security Erase HDD Data.\n3. لبقية الأجهزة: يمكن الإقلاع من الشبكة (Network Boot) واستخدام أوامر Diskpart في الـ Command Prompt لمسح القرص (Clean).",
+                source: "Clear Data Guide"
+            }
+        ];
+
+        // دالة لتعقيم المدخلات ومنع هجمات XSS
+        function sanitizeInput(str) {
+            if (!str) return "";
+            return str.replace(/[<>&"']/g, function(match) {
+                const escape = {
+                    '<': '&lt;',
+                    '>': '&gt;',
+                    '&': '&amp;',
+                    '"': '&quot;',
+                    "'": '&#x27;'
+                };
+                return escape[match];
+            }).trim();
+        }
+
+        // دالة البحث الرئيسية
+        function handleSearch() {
+            const inputElement = document.getElementById('searchInput');
+            const errorMsg = document.getElementById('errorMsg');
+            const query = sanitizeInput(inputElement.value).toLowerCase();
+
+            // التحقق من صحة المدخلات
+            if (query.length < 3) {
+                errorMsg.innerText = "الرجاء كتابة 3 أحرف على الأقل للبحث.";
+                errorMsg.style.display = 'block';
+                return;
+            }
+            errorMsg.style.display = 'none';
+
+            // إظهار حاوية النتائج
+            document.getElementById('resultsContainer').classList.add('active');
+            document.getElementById('onlineSearchSection').style.display = 'block';
+            
+            // مسح النتائج السابقة
+            const kbResults = document.getElementById('kbResults');
+            const resultTitle = document.getElementById('resultTitle');
+            kbResults.innerHTML = '';
+            resultTitle.style.display = 'block';
+
+            // البحث في قاعدة المعرفة (الملفات)
+            const matchedResults = knowledgeBase.filter(item => {
+                return item.keywords.some(kw => query.includes(kw.toLowerCase()));
+            });
+
+            // محاكاة الذكاء الاصطناعي
+            simulateAI(query, matchedResults);
+
+            // عرض النتائج
+            if (matchedResults.length > 0) {
+                matchedResults.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    
+                    const title = document.createElement('div');
+                    title.className = 'card-title';
+                    title.innerHTML = `📄 ${item.title}`;
+                    
+                    const body = document.createElement('div');
+                    body.className = 'card-body';
+                    body.textContent = item.solution; // استخدام textContent للأمان
+                    
+                    const footer = document.createElement('div');
+                    footer.className = 'card-footer';
+                    
+                    const source = document.createElement('span');
+                    source.textContent = `المصدر: ${item.source}`;
+                    
+                    const tag = document.createElement('span');
+                    tag.className = 'tag';
+                    tag.textContent = 'دليل رسمي';
+
+                    footer.appendChild(source);
+                    footer.appendChild(tag);
+
+                    card.appendChild(title);
+                    card.appendChild(body);
+                    card.appendChild(footer);
+                    
+                    kbResults.appendChild(card);
+                });
+            } else {
+                const emptyState = document.createElement('div');
+                emptyState.className = 'empty-state';
+                emptyState.innerHTML = `
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <h3>لم يتم العثور على تطابق مباشر في الأدلة الرسمية.</h3>
+                    <p>جرب كلمات بحث أخرى (مثل: ساعد، شبكة، طابعة، تواصل، HR) أو استخدم البحث عبر الإنترنت أو المساعد الذكي.</p>
+                `;
+                kbResults.appendChild(emptyState);
+            }
+            
+            // التمرير إلى النتائج بسلاسة
+            document.getElementById('resultsContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // دالة محاكاة الذكاء الاصطناعي
+        function simulateAI(query, matchedData) {
+            const aiCard = document.getElementById('aiCard');
+            const aiContent = document.getElementById('aiContent');
+            const aiLoading = document.getElementById('aiLoading');
+            
+            aiCard.style.display = 'block';
+            aiLoading.classList.add('active');
+            aiContent.textContent = "جاري تحليل طلبك...";
+            
+            // محاكاة وقت التفكير للذكاء الاصطناعي
+            setTimeout(() => {
+                aiLoading.classList.remove('active');
+                
+                let responseHTML = `<p>بناءً على تحليلي لطلبك <strong>("${query}")</strong>:</p>`;
+                
+                if (matchedData.length > 0) {
+                    responseHTML += `<p>لقد وجدت حلولاً مطابقة في الأدلة الرسمية للمدرسة (انظر البطاقات أدناه). أنصحك بتجربة الحلول المذكورة خطوة بخطوة.</p>`;
+                    if (query.includes("شبكة") || query.includes("نت")) {
+                        responseHTML += `<p><strong>نصيحة إضافية:</strong> تأكد دائماً من إرفاق نتيجة اختبار (Ping) أو (Traceroute) عند فتح تذكرة في 'ساعد' لتسريع عملية الدعم.</p>`;
+                    }
+                } else {
+                    responseHTML += `<p>لم أجد حلاً مطابقاً تماماً في الملفات المحلية. قد تكون المشكلة متعلقة بنظام لم يتم توثيقه بعد أو تحتاج إلى تدخل بشري.</p>`;
+                    responseHTML += `<p>يمكنك استخدام زر <strong>"البحث في الإنترنت"</strong> أدناه، أو فتح تذكرة في منصة <strong>ساعد</strong> وتوجيهها لفريق (School-HelpDesk).</p>`;
+                }
+                
+                aiContent.innerHTML = responseHTML; // آمن لأن النص تم تعقيمه مسبقاً
+            }, 1500); // ثانية ونصف تأخير
+        }
+
+        // دالة البحث في الإنترنت
+        function searchOnline() {
+            const query = sanitizeInput(document.getElementById('searchInput').value);
+            if (!query) return;
+            
+            // صياغة استعلام بحث دقيق
+            const searchString = encodeURIComponent(`دعم فني وزارة التربية والتعليم قطر ${query}`);
+            const googleUrl = `https://www.google.com/search?q=${searchString}`;
+            
+            // فتح في نافذة جديدة
+            window.open(googleUrl, '_blank', 'noopener,noreferrer');
+        }
+
+        // تفعيل البحث عند الضغط على Enter
+        document.getElementById('searchInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                handleSearch();
+            }
+        });
+    </script>
+</body>
+</html>
