@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- سياسة أمان المحتوى لمنع الاختراقات (CSP) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
-    <title>المساعد الذكي للدعم الفني </title>
+    <title>المساعد الذكي للدعم الفني |مسؤولي تقنية المعلومات بالمدارس</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -159,7 +159,7 @@
 
         .input-group input:focus {
             outline: none;
-            background-color: #fffdf0; /* لمسة صفراء خفيفة */
+            background-color: #fffdf0;
             box-shadow: inset 0 0 0 2px var(--yellow);
         }
 
@@ -181,7 +181,6 @@
             align-items: center;
             justify-content: center;
             gap: 8px;
-            text-transform: uppercase;
         }
 
         .btn-primary {
@@ -236,7 +235,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* AI Box - نمط مختلف قليلاً (أصفر) */
+        /* AI Box */
         .ai-box {
             background-color: var(--yellow);
             border: 3px solid var(--black);
@@ -318,14 +317,11 @@
             font-size: 1.4rem;
             font-weight: 800;
             margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            display: inline-block;
             background: var(--white);
             padding: 10px 15px;
             border: 2px solid var(--black);
             border-radius: var(--radius);
-            display: inline-block;
             box-shadow: 3px 3px 0px var(--yellow);
         }
 
@@ -341,7 +337,6 @@
             position: relative;
         }
 
-        /* شريط جانبي أصفر */
         .card::before {
             content: '';
             position: absolute;
@@ -377,6 +372,13 @@
             line-height: 1.8;
             font-weight: 500;
             padding-right: 10px;
+            direction: ltr; /* لضمان قراءة الأكواد الإنجليزية بشكل صحيح */
+            text-align: right;
+        }
+
+        .card-body span.ar {
+            direction: rtl;
+            display: inline-block;
         }
 
         .card-footer {
@@ -403,7 +405,6 @@
             border-radius: 4px;
             font-size: 0.85rem;
             font-weight: 700;
-            letter-spacing: 0.5px;
         }
 
         /* Empty State */
@@ -477,19 +478,19 @@
 
     <header>
         <h1>المساعد الذكي للدعم الفني</h1>
-        <p>مسؤولي تقنية المعلومات بالمدارس - إدارة تكنولوجيا المعلومات</p>
+        <p>خاص بمسؤولي تقنية المعلومات بالمدراس - إدارة نظم المعلوماتخا</p>
     </header>
 
     <main>
         <!-- قسم البحث -->
         <section class="search-section">
             <h2>كيف يمكننا مساعدتك اليوم؟</h2>
-            <p>اكتب مشكلتك التقنية وسنقوم بالبحث في الأدلة الإجرائية المعتمدة.</p>
+            <p>اكتب مشكلتك التقنية وسنقوم بالبحث في الأدلة الإجرائية وقاعدة بيانات الحلول المعتمدة.</p>
             
             <div class="input-group">
                 <div class="input-wrapper">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                    <input type="text" id="searchInput" placeholder="مثال: ساعد، شبكة، طابعة، تواصل..." aria-label="وصف المشكلة" autocomplete="off" maxlength="200">
+                    <input type="text" id="searchInput" placeholder="مثال: القرص C ممتلئ، مشكلة في الطابعة، بطارية اللابتوب..." aria-label="وصف المشكلة" autocomplete="off" maxlength="200">
                 </div>
                 <button class="btn btn-primary" id="searchBtn" onclick="handleSearch()">
                     بحث
@@ -525,7 +526,7 @@
         <!-- البحث عبر الإنترنت -->
         <div id="onlineSearchSection" class="online-search">
             <h3>لم تجد الحل المناسب؟</h3>
-            <p>يمكنك توسيع نطاق البحث عبر محرك Google للوصول إلى حلول إضافية.</p>
+            <p>يمكنك توسيع نطاق البحث عبر محرك Google للوصول إلى منتديات الدعم أو حلول إضافية.</p>
             <button class="btn btn-secondary" id="onlineSearchBtn" onclick="searchOnline()">
                 🌐 البحث في الإنترنت
             </button>
@@ -533,67 +534,172 @@
     </main>
 
     <script>
-        // قاعدة المعرفة
+        // قاعدة المعرفة المحدثة بناءً على ملف Excel + الملفات السابقة
         const knowledgeBase = [
+            // --- بيانات مستخرجة من Soluation Store.xlsx ---
             {
-                keywords: ["ساعد", "saaed", "بلاغ", "طلب", "تذكرة"],
-                title: "منصة ساعد - كيفية فتح بلاغ أو طلب خدمة",
-                solution: "1. الدخول إلى منصة ساعد (https://saaed.edu.gov.qa/).\n2. اختيار 'School Incidents' للإبلاغ عن عطل، أو 'School Requests' لطلب أجهزة/صلاحيات.\n3. تعبئة الحقول: العنوان، الوصف الدقيق، ذكر الجهاز المتأثر (مثل IP أو Asset Tag)، وإرفاق صورة.\n4. تحويل البلاغ للجهة الصحيحة (مثل: QCS للابتوبات Lenovo، أو Mannai للطابعات HP).\n\nملاحظة: حتى المشاكل التي تُحل داخل المدرسة يجب تسجيلها في ساعد للتوثيق.",
-                source: "دليل استخدام ساعد"
+                keywords: ["قرص", "القرص c", "مساحة", "امتلاء", "drive c", "one drive", "storage"],
+                title: "مشكلة امتلاء القرص C",
+                solution: "Unlink OneDrive to pc then link to drive D, then delete local storage from drive C.",
+                source: "Soluation Store - Issue Entry"
             },
             {
-                keywords: ["تواصل", "tawasol", "كلمة المرور", "مراسلات", "نسيان الباسورد"],
-                title: "نظام تواصل - تغيير أو استرجاع كلمة المرور",
-                solution: "لتغيير كلمة المرور:\n1. من الشاشة الرئيسية، انقر على اسم المستخدم في الزاوية العليا.\n2. اختر 'تغيير كلمة المرور'، وأدخل القديمة ثم الجديدة.\n\nفي حال نسيان كلمة المرور:\nيجب الدخول لمنصة 'ساعد' وفتح تذكرة، وإرفاق النموذج المعتمد لاستعادة الحساب.",
-                source: "دليل مدير نظام تواصل"
+                keywords: ["كلمة مرور", "باسورد", "نسيان", "انتهاء صلاحية", "password", "reset", "حساب", "حظر", "تراست", "ايميل", "ايميلات", "email", "account"],
+                title: "مشاكل الحسابات وكلمات المرور",
+                solution: "1. Reset password (إعادة تعيين كلمة المرور).\n2. مشاكل الحسابات (حظر، تراست، توقف الإيميل، تغيير رقم الجوال):\n   - Follow MOE team instruction for secure channel repair / Install new image.\n   - Wait for 15 minutes and restart PC.\n   - Delete user profile and add it again.\n   - Change phone number from URL of MOE.",
+                source: "Soluation Store / IT Guides"
             },
             {
-                keywords: ["شبكة", "انترنت", "نت", "واي فاي", "wifi", "بطء", "network", "ping"],
-                title: "أعطال الشبكة والإنترنت",
-                solution: "1. تأكد من توصيل كابل الإيثرنت أو اتصال الواي فاي.\n2. تحقق من أضواء أجهزة الشبكة في غرفة الخوادم: يجب أن تكون خضراء مستقرة.\n3. قم بإجراء اختبار Ping (مثلاً: ping google.com) وأرفق الصورة في التذكرة.\n4. عند فتح تذكرة في 'ساعد'، اذكر عنوان MAC أو IP لتسريع الدعم.",
-                source: "School Network Guideline"
+                keywords: ["فورمات", "تابلت", "تأيلت", "tablet", "format"],
+                title: "فورمات التابلت",
+                solution: "توصيل التابلت بالكابل وبدء الفورمات.",
+                source: "Soluation Store"
             },
             {
-                keywords: ["bitlocker", "تشفير", "بيت لوكر", "مفتاح القرص"],
+                keywords: ["برامج", "برنامج", "تثبيت", "SCCM", "portal", "company portal", "حذف برامج"],
+                title: "طلبات حذف وإضافة برامج الوزارة",
+                solution: "Install new software from Company Portal (SCCM & Microsoft Portal).",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["أوفيس", "office", "o365", "توقف", "تعليق", "تفعيل", "تيمز", "teams", "مشاركة الشاشة"],
+                title: "مشاكل الأوفيس O365 والتيمز Teams",
+                solution: "للأوفيس: Signout/signin to O365 - Quick repair - Online repair.\nللتيمز: Install new version - adjust setting.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["شبكة", "نت", "انترنت", "اتصال", "network", "ip", "ap", "port", "بطء", "انقطاع"],
+                title: "مشاكل الشبكة والاتصال",
+                solution: "1. مشكلة عدم الاتصال: Reinstall network driver / Network reset.\n2. مشاكل الشبكة (عدم الحصول على IP، توقف AP، بطء، Port):\n   - Release/renew ip - flushDNS.\n   - Restart core switch otherwise escalated to MOE team.\n3. إضافة نقاط نتورك جديدة (SW - APs): يتم عبر MOE team.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["هاردوير", "بطارية", "شاحن", "شاشة", "كيبورد", "لوحة مفاتيح", "لابتوب", "hardware"],
+                title: "مشاكل الهاردوير (اللاب توب/الحاسب)",
+                solution: "Fix and Replace damaged port by Service company suppliers.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["توصيل", "تغيير أماكن", "تركيب أجهزة", "prepair", "install"],
+                title: "توصيل وإضافة وتغيير أماكن الأجهزة",
+                solution: "Prepare places - check needed network port - install needed software.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["فقدان ملفات", "استرجاع", "حذف", "ملفات الموظفين", "restore", "backup"],
+                title: "مشاكل فقدان ملفات الموظفين",
+                solution: "Restore files from (OneDrive - FP Server backup - PC recycle bin - third party).",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["onedrive", "ون درايف", "مشاركة", "ربط", "نفاذ المساحة"],
+                title: "مشاكل OneDrive",
+                solution: "Relink to PC - Delete duplicated files - change path.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["netsupport", "معمل", "نت سبورت", "شاشة سوداء", "توقف المعمل"],
+                title: "مشاكل NetSupport (المعامل)",
+                solution: "Adjust tutor setting - reinstall.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["أنظمة الوزارة", "hr", "tms", "asset", "tawasol", "saaed", "archive", "moeservices", "nsis", "qneds", "توقف نظام"],
+                title: "مشاكل أنظمة وتطبيقات الوزارة",
+                solution: "Adjust browser setting and needed software - Contact MOE team.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["بروجكتور", "projector", "سبورة", "عرض", "فلتر", "إضاءة", "صوت", "بوكس"],
+                title: "مشاكل البروجكتور والسبورة التفاعلية",
+                solution: "1. البروجكتور العادي: Clean filters - Adjust projector settings.\n2. بوكس البروجكتور (تلف كامل/جزئي): Replace damaged port by Service company suppliers.\n3. وصلات العرض: Adjust setting - replace damaged parts.\n4. قلم البروجكتور: Adjust setting - replace pen header - replace battery.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["طابعة", "طابعات", "حبر", "ورق", "درام", "دبابيس", "printer", "toner", "باركود", "barcode"],
+                title: "مشاكل الطابعات المركزية وطابعات الباركود",
+                solution: "1. الطابعات المركزية: erase jam paper - change toner and drums - change staples - restart printers - restart printer server - use unified cards for employers (like Hayya cards).\n2. طابعات الباركود: Add driver - Adjust printer setting for (Tawasol - Assets) - change toner and paper.\n3. تغيير أماكن الطابعات: By Service company suppliers.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["shared drive", "مشاركة ملفات", "شبكة مشتركة", "زيادة مساحة", "أرشفة"],
+                title: "مشاكل Shared Drive",
+                solution: "Create shared folders - Map - change quota - restore deleted files from FP server backup.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["تهديدات", "حماية بيانات", "threats", "security", "فيروس"],
+                title: "مشاكل التهديدات وحماية البيانات",
+                solution: "Contact MOE Security Team immediately.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["خلفيات", "ترقيم", "بروكسي", "تخطي", "proxy", "معامل"],
+                title: "مشاكل معامل الحاسوب (سياسات المجموعة)",
+                solution: "Prevent changing Proxy - background - lock screen from group policy.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["صوت", "مايك", "سماعة", "لاقط", "sound", "mic"],
+                title: "مشاكل نظام الصوت",
+                solution: "Fix and Replace damaged port by Service company suppliers.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["كاميرا", "كاميرات", "مراقبة", "nvr", "camera", "zoom", "focus"],
+                title: "مشاكل الكاميرات",
+                solution: "Adjust to auxiliary display & Change mode to extended - Review remote playback - escalate to Service company suppliers.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["جرس", "هواتف سيسكو", "بصمة", "cisco", "fingerprint", "متنوعة"],
+                title: "مشاكل متنوعة (جرس، هواتف، بصمة)",
+                solution: "Adjust setting otherwise escalate to Service company suppliers.",
+                source: "Soluation Store"
+            },
+            {
+                keywords: ["تزويد", "معلمين جدد", "موظفين جدد", "استلام أجهزة", "تسليم أجهزة"],
+                title: "تزويد الموظفين الجدد بالأجهزة",
+                solution: "Repair and install new images and needed software. Check laptop health and components.",
+                source: "Soluation Store"
+            },
+
+            // --- بيانات إضافية من الأدلة السابقة ---
+            {
+                keywords: ["ساعد", "saaed", "بلاغ", "تذكرة"],
+                title: "منصة ساعد - فتح بلاغ",
+                solution: "1. الدخول إلى (https://saaed.edu.gov.qa/).\n2. اختيار 'School Incidents'.\n3. تعبئة الحقول (IP, Asset Tag, صورة).\n4. تحويل البلاغ للجهة الصحيحة.",
+                source: "دليل ساعد"
+            },
+            {
+                keywords: ["تواصل", "tawasol", "مراسلات"],
+                title: "نظام تواصل",
+                solution: "لتغيير كلمة المرور: انقر على اسم المستخدم > تغيير كلمة المرور.\nفي حال النسيان: فتح تذكرة في ساعد.",
+                source: "دليل تواصل"
+            },
+            {
+                keywords: ["bitlocker", "تشفير", "مفتاح القرص"],
                 title: "استعادة مفتاح تشفير BitLocker",
-                solution: "إذا كان القرص مشفراً وتظهر شاشة تطلب مفتاح الاسترداد:\n1. من جهاز آخر، توجه إلى: https://account.microsoft.com/devices/recoverykey\n2. سجل الدخول بحساب الوزارة (edu.gov.qa).\n3. اختر الجهاز واضغط 'View BitLocker Keys'.\n4. استخدم المفتاح لفتح الجهاز.",
+                solution: "توجه إلى: https://account.microsoft.com/devices/recoverykey\nسجل الدخول بحساب الوزارة واحصل على المفتاح.",
                 source: "Disk Encryption Memo"
             },
             {
-                keywords: ["netSupport", "معمل", "حاسب", "طالب", "شاشة سوداء", "sleep"],
-                title: "مشاكل برنامج NetSupport في المعامل",
-                solution: "1. إذا ظهرت شاشة سوداء للطالب: تأكد من اختيار 'Room' الصحيح (مثلاً LAB1).\n2. إذا لم يتصل الجهاز: أعد تشغيله، أو استخدم أمر (GPUpdate/force) من حساب HD.\n3. لمنع الطلاب من وضع الجهاز في وضع Sleep: من Control Panel > Power Options اختر 'Do Nothing' لزر Sleep.",
-                source: "مشاكل NetSupport"
+                keywords: ["أرشفة", "archive", "IE mode"],
+                title: "نظام الأرشفة الإلكترونية",
+                solution: "أضف بيانات الدخول في Credential Manager، ثم شغل الرابط عبر Edge في وضع IE Mode.",
+                source: "Archiving System"
             },
             {
-                keywords: ["أرشفة", "archiving", "archive", "IE mode", "متصفح"],
-                title: "نظام الأرشفة الإلكترونية لا يفتح",
-                solution: "1. افتح Control Panel > Credential Manager > Windows Credentials.\n2. أضف: Internet address (archive.edu.gov.qa)، Username (QESC\\School Account)، Password.\n3. في متصفح Edge (الإعدادات > المتصفح الافتراضي)، أضف الرابط: https://archive.edu.gov.qa/Default.aspx واختر 'Allow'.",
-                source: "Archiving System Settings"
+                keywords: ["asset", "أصول", "عهد", "zebra"],
+                title: "نظام الأصول والعهد",
+                solution: "ثبت .NET Framework، واضبط طابعة Zebra (ورق 50.80x25.40mm)، وشغل النظام عبر IE Mode.",
+                source: "Asset Tracking"
             },
             {
-                keywords: ["asset", "أصول", "عهد", "باركود", "zebra"],
-                title: "إعدادات نظام الأصول والعهد (Asset Tracking)",
-                solution: "1. تأكد من تثبيت .NET Framework (من Software Center).\n2. إعدادات طابعة Zebra: من Preferences، اجعل Speed و Darkness عاليين، وحدد الورق 50.80mm x 25.40mm.\n3. شغل النظام عبر Edge في وضع IE Mode.\n4. لطباعة الباركود، حمل (SMMPRintActiveX).",
-                source: "Asset Tracking Guide"
-            },
-            {
-                keywords: ["HR", "موارد بشرية", "erp", "جافا", "java"],
-                title: "نظام الموارد البشرية (HR) لا يعمل",
-                solution: "1. تأكد من تثبيت Java 8 Update 251.\n2. من إعدادات Java > Security > Edit Site List، أضف: http://hr.edu.gov.qa و https://erp.edu.gov.qa\n3. شغل اختصار (HR)، وعند ظهور رسالة Java اختر 'Run'.",
+                keywords: ["java", "hr", "موارد بشرية", "erp"],
+                title: "نظام الموارد البشرية (HR)",
+                solution: "ثبت Java 8، وأضف الروابط في Security > Edit Site List.",
                 source: "HR & ERP Settings"
-            },
-            {
-                keywords: ["بروجكتر", "epson", "عرض", "شاشة", "تفاعلي", "سبورة"],
-                title: "تشغيل جهاز العرض التفاعلي Epson",
-                solution: "1. وصل كابلات HDMI و USB من اللابتوب لمنفذ الحائط.\n2. اضغط زر الطاقة في الريموت.\n3. إذا لم تظهر الشاشة، اضغط 'Home' في الريموت واختر 'HDMI'.\n4. لتفعيل القلم: اضغط على أيقونة القلم بالأسفل.",
-                source: "Epson Projector Guide"
-            },
-            {
-                keywords: ["OneDrive", "ون درايف", "ملفات", "مشاركة", "استرجاع"],
-                title: "كيفية استخدام واسترجاع ملفات OneDrive",
-                solution: "1. للوصول للتطبيق: اضغط أيقونة السحابة بجانب الساعة.\n2. لمشاركة ملف: كليك يمين > Share.\n3. لاسترجاع ملف محذوف: افتح التطبيق > Recycle bin > Restore (متاح 30 يوماً).\n4. لاسترجاع نسخة قديمة: كليك يمين > Version history.",
-                source: "OneDrive Guide"
             }
         ];
 
@@ -627,9 +733,16 @@
             kbResults.innerHTML = '';
             resultTitle.style.display = 'inline-block';
 
-            // فلترة النتائج
+            // خوارزمية بحث مرنة (تجزئة الجملة للبحث عن الكلمات المفتاحية)
+            const queryWords = query.split(/\s+/);
+            
             const matchedResults = knowledgeBase.filter(item => {
-                return item.keywords.some(kw => query.includes(kw.toLowerCase()));
+                // التحقق مما إذا كانت أي كلمة مفتاحية موجودة في نص البحث
+                return item.keywords.some(kw => {
+                    const keyword = kw.toLowerCase();
+                    // تطابق دقيق أو تطابق جزئي للكلمة المفتاحية
+                    return query.includes(keyword) || queryWords.some(word => keyword.includes(word) && word.length > 2);
+                });
             });
 
             // تشغيل المساعد الذكي
@@ -647,7 +760,17 @@
                     
                     const body = document.createElement('div');
                     body.className = 'card-body';
-                    body.textContent = item.solution; 
+                    
+                    // تنسيق النص المختلط (عربي/إنجليزي)
+                    const formattedSolution = item.solution.split('\n').map(line => {
+                        // إذا كان السطر يحتوي على حروف إنجليزية فقط، نضعه في span خاص
+                        if (/^[A-Za-z0-9\s.,\-/()]+$/.test(line)) {
+                            return `<span class="ar">${line}</span>`;
+                        }
+                        return line;
+                    }).join('\n');
+                    
+                    body.innerHTML = formattedSolution; // آمن لأن البيانات ثابتة داخل الكود
                     
                     const footer = document.createElement('div');
                     footer.className = 'card-footer';
@@ -658,7 +781,7 @@
                     
                     const tag = document.createElement('span');
                     tag.className = 'tag';
-                    tag.textContent = 'دليل معتمد';
+                    tag.textContent = 'حل معتمد';
 
                     footer.appendChild(source);
                     footer.appendChild(tag);
@@ -674,8 +797,8 @@
                 emptyState.className = 'empty-state';
                 emptyState.innerHTML = `
                     <svg fill="none" stroke="#000000" width="64" height="64" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <h3>لم نجد حلاً مطابقاً في الأدلة</h3>
-                    <p>جرب كلمات بحث أخرى (مثل: ساعد، شبكة، طابعة) أو استخدم البحث في الإنترنت.</p>
+                    <h3>لم نجد حلاً مطابقاً في قاعدة البيانات</h3>
+                    <p>جرب كلمات بحث أخرى (مثل: قرص، شبكة، طابعة، أوفيس) أو استخدم البحث في الإنترنت.</p>
                 `;
                 kbResults.appendChild(emptyState);
             }
@@ -691,7 +814,7 @@
             
             aiCard.style.display = 'block';
             aiLoading.classList.add('active');
-            aiContent.textContent = "جاري تحليل المشكلة...";
+            aiContent.textContent = "جاري تحليل المشكلة وقراءة قاعدة البيانات...";
             
             setTimeout(() => {
                 aiLoading.classList.remove('active');
@@ -699,17 +822,20 @@
                 let responseHTML = `<p>بناءً على تحليلي لطلبك <strong>("${query}")</strong>:</p>`;
                 
                 if (matchedData.length > 0) {
-                    responseHTML += `<p>لقد وجدت <strong>${matchedData.length}</strong> حلول مطابقة في الأدلة الرسمية (انظر البطاقات أدناه). أنصحك بتجربة الخطوات المذكورة.</p>`;
-                    if (query.includes("شبكة") || query.includes("نت")) {
-                        responseHTML += `<p><strong>💡 نصيحة:</strong> تأكد دائماً من إرفاق نتيجة اختبار (Ping) عند فتح تذكرة في 'ساعد' لتسريع استجابة فريق الدعم.</p>`;
+                    responseHTML += `<p>لقد وجدت <strong>${matchedData.length}</strong> حلول مطابقة في قاعدة البيانات. يرجى مراجعة البطاقات أدناه للحصول على خطوات الحل التفصيلية.</p>`;
+                    
+                    if (query.includes("شبكة") || query.includes("نت") || query.includes("ip")) {
+                        responseHTML += `<p><strong>💡 نصيحة:</strong> لمشاكل الشبكة، دائماً قم بتجربة <code>ipconfig /release</code> ثم <code>ipconfig /renew</code> قبل فتح تذكرة في 'ساعد'.</p>`;
+                    } else if (query.includes("طابعة") || query.includes("حبر")) {
+                        responseHTML += `<p><strong>💡 نصيحة:</strong> تأكد من ذكر رقم الأصل (Asset Tag) الخاص بالطابعة عند فتح تذكرة في ساعد لتسريع الصيانة.</p>`;
                     }
                 } else {
                     responseHTML += `<p>لم أجد حلاً مطابقاً تماماً في المستندات المحلية. قد تحتاج إلى تدخل بشري.</p>`;
-                    responseHTML += `<p>يمكنك النقر على زر <strong>"البحث في الإنترنت"</strong> بالأسفل، أو فتح تذكرة في <strong>ساعد</strong>.</p>`;
+                    responseHTML += `<p>يمكنك النقر على زر <strong>"البحث في الإنترنت"</strong> بالأسفل، أو فتح تذكرة في <strong>ساعد</strong> وتوجيهها لفريق (School-HelpDesk).</p>`;
                 }
                 
                 aiContent.innerHTML = responseHTML;
-            }, 1500);
+            }, 1200); // تأخير بسيط ليحاكي التفكير
         }
 
         // البحث في الإنترنت
@@ -717,7 +843,7 @@
             const query = sanitizeInput(document.getElementById('searchInput').value);
             if (!query) return;
             
-            const searchString = encodeURIComponent(`دعم فني وزارة التربية والتعليم قطر ${query}`);
+            const searchString = encodeURIComponent(`دعم فني ${query}`);
             const googleUrl = `https://www.google.com/search?q=${searchString}`;
             
             window.open(googleUrl, '_blank', 'noopener,noreferrer');
