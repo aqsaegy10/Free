@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- سياسة أمان المحتوى لمنع الاختراقات (CSP) -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src 'self' 'unsafe-inline';">
-    <title>المساعد الذكي للدعم الفني |مسؤولي تقنية المعلومات بالمدارس</title>
+    <title>المساعد الذكي للدعم الفني | مسؤولي تقنية المعلومات بالمدارس</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            /* لوحة الألوان: أسود، أصفر، أبيض */
             --black: #0f0f0f;
             --black-soft: #2a2a2a;
             --yellow: #ffd600;
@@ -19,22 +17,13 @@
             --white: #ffffff;
             --gray-bg: #f8f9fa;
             --border-color: #000000;
-            
             --radius: 8px;
-            /* ظل تقني حاد */
             --tech-shadow: 4px 4px 0px var(--black);
             --tech-shadow-hover: 6px 6px 0px var(--black);
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: 'Tajawal', sans-serif;
-            /* خلفية شبكية خفيفة */
             background-color: var(--white);
             background-image: 
                 linear-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px),
@@ -48,8 +37,6 @@
             flex-direction: column;
             -webkit-font-smoothing: antialiased;
         }
-
-        /* Header */
         header {
             background-color: var(--black);
             color: var(--white);
@@ -58,30 +45,9 @@
             border-bottom: 6px solid var(--yellow);
             position: relative;
         }
-
-        header h1 {
-            font-size: 2.2rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-            letter-spacing: 1px;
-        }
-
-        header p {
-            font-size: 1.1rem;
-            color: var(--yellow);
-            font-weight: 700;
-        }
-
-        /* Main Container */
-        main {
-            flex: 1;
-            max-width: 1000px;
-            margin: 3rem auto;
-            padding: 0 1.5rem;
-            width: 100%;
-        }
-
-        /* Search Section */
+        header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.5rem; letter-spacing: 1px; }
+        header p { font-size: 1.1rem; color: var(--yellow); font-weight: 700; }
+        main { flex: 1; max-width: 1000px; margin: 3rem auto; padding: 0 1.5rem; width: 100%; }
         .search-section {
             background: var(--white);
             border: 3px solid var(--border-color);
@@ -92,385 +58,113 @@
             margin-bottom: 3rem;
             position: relative;
         }
-
-        /* شريط أصفر علوي للبطاقة */
         .search-section::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
+            top: 0; left: 0; right: 0;
             height: 8px;
             background-color: var(--yellow);
             border-radius: 5px 5px 0 0;
             border-bottom: 2px solid var(--black);
         }
-
-        .search-section h2 {
-            color: var(--black);
-            margin-bottom: 0.75rem;
-            margin-top: 0.5rem;
-            font-size: 1.6rem;
-            font-weight: 800;
-        }
-
-        .search-section p {
-            color: var(--black-soft);
-            margin-bottom: 2rem;
-            font-size: 1.05rem;
-            font-weight: 500;
-        }
-
-        .input-group {
-            display: flex;
-            gap: 15px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .input-wrapper {
-            position: relative;
-            flex: 1;
-        }
-
+        .search-section h2 { color: var(--black); margin-bottom: 0.75rem; margin-top: 0.5rem; font-size: 1.6rem; font-weight: 800; }
+        .search-section p { color: var(--black-soft); margin-bottom: 2rem; font-size: 1.05rem; font-weight: 500; }
+        .input-group { display: flex; gap: 15px; max-width: 800px; margin: 0 auto; }
+        .input-wrapper { position: relative; flex: 1; }
         .input-wrapper svg {
-            position: absolute;
-            right: 1.2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 24px;
-            height: 24px;
-            color: var(--black);
-            pointer-events: none;
+            position: absolute; right: 1.2rem; top: 50%; transform: translateY(-50%);
+            width: 24px; height: 24px; color: var(--black); pointer-events: none;
         }
-
         .input-group input {
-            width: 100%;
-            padding: 1.2rem 3.5rem 1.2rem 1.2rem;
-            border: 3px solid var(--black);
-            border-radius: var(--radius);
-            font-size: 1.1rem;
-            font-family: inherit;
-            font-weight: 700;
-            transition: all 0.2s ease;
-            background: var(--white);
-            color: var(--black);
+            width: 100%; padding: 1.2rem 3.5rem 1.2rem 1.2rem;
+            border: 3px solid var(--black); border-radius: var(--radius);
+            font-size: 1.1rem; font-family: inherit; font-weight: 700;
+            transition: all 0.2s ease; background: var(--white); color: var(--black);
         }
-
-        .input-group input:focus {
-            outline: none;
-            background-color: #fffdf0;
-            box-shadow: inset 0 0 0 2px var(--yellow);
-        }
-
-        .input-group input::placeholder {
-            color: #888;
-            font-weight: 500;
-        }
-
+        .input-group input:focus { outline: none; background-color: #fffdf0; box-shadow: inset 0 0 0 2px var(--yellow); }
+        .input-group input::placeholder { color: #888; font-weight: 500; }
         .btn {
-            padding: 1.2rem 2.5rem;
-            border: 3px solid var(--black);
-            border-radius: var(--radius);
-            font-size: 1.1rem;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-family: inherit;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
+            padding: 1.2rem 2.5rem; border: 3px solid var(--black); border-radius: var(--radius);
+            font-size: 1.1rem; font-weight: 800; cursor: pointer; transition: all 0.2s ease;
+            font-family: inherit; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
         }
-
-        .btn-primary {
-            background-color: var(--yellow);
-            color: var(--black);
-            box-shadow: var(--tech-shadow);
-        }
-
-        .btn-primary:hover {
-            background-color: var(--yellow-hover);
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px var(--black);
-        }
-
-        .btn-secondary {
-            background-color: var(--white);
-            color: var(--black);
-            box-shadow: var(--tech-shadow);
-        }
-
-        .btn-secondary:hover {
-            background-color: var(--gray-bg);
-            transform: translate(2px, 2px);
-            box-shadow: 2px 2px 0px var(--black);
-        }
-
-        /* Error Msg */
+        .btn-primary { background-color: var(--yellow); color: var(--black); box-shadow: var(--tech-shadow); }
+        .btn-primary:hover { background-color: var(--yellow-hover); transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--black); }
+        .btn-secondary { background-color: var(--white); color: var(--black); box-shadow: var(--tech-shadow); }
+        .btn-secondary:hover { background-color: var(--gray-bg); transform: translate(2px, 2px); box-shadow: 2px 2px 0px var(--black); }
         #errorMsg {
-            color: var(--black);
-            background-color: var(--yellow);
-            border: 2px solid var(--black);
-            padding: 10px;
-            border-radius: var(--radius);
-            margin-top: 15px;
-            font-size: 0.95rem;
-            font-weight: 700;
-            display: none;
+            color: var(--black); background-color: var(--yellow); border: 2px solid var(--black);
+            padding: 10px; border-radius: var(--radius); margin-top: 15px;
+            font-size: 0.95rem; font-weight: 700; display: none;
         }
-
-        /* Results Container */
-        .results-container {
-            display: none;
-            animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .results-container.active {
-            display: block;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* AI Box */
+        .results-container { display: none; animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        .results-container.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .ai-box {
-            background-color: var(--yellow);
-            border: 3px solid var(--black);
-            border-radius: var(--radius);
-            padding: 2rem;
-            margin-bottom: 2.5rem;
-            box-shadow: var(--tech-shadow);
-            position: relative;
+            background-color: var(--yellow); border: 3px solid var(--black); border-radius: var(--radius);
+            padding: 2rem; margin-bottom: 2.5rem; box-shadow: var(--tech-shadow); position: relative;
         }
-
         .ai-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 1rem;
-            color: var(--black);
-            font-weight: 800;
-            font-size: 1.25rem;
-            border-bottom: 2px dashed rgba(0,0,0,0.2);
-            padding-bottom: 10px;
+            display: flex; align-items: center; gap: 12px; margin-bottom: 1rem;
+            color: var(--black); font-weight: 800; font-size: 1.25rem;
+            border-bottom: 2px dashed rgba(0,0,0,0.2); padding-bottom: 10px;
         }
-
         .ai-icon {
-            background: var(--black);
-            color: var(--yellow);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
+            background: var(--black); color: var(--yellow); width: 36px; height: 36px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
         }
-
-        .ai-content {
-            color: var(--black);
-            font-size: 1.05rem;
-            line-height: 1.8;
-            font-weight: 500;
-        }
-
-        .ai-content strong {
-            background-color: var(--black);
-            color: var(--white);
-            padding: 2px 6px;
-            border-radius: 4px;
-        }
-
-        .ai-loading {
-            display: none;
-            margin-top: 15px;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .ai-loading.active {
-            display: flex;
-        }
-
-        .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background-color: var(--black);
-            animation: pulse 1.4s infinite ease-in-out both;
-        }
-
+        .ai-content { color: var(--black); font-size: 1.05rem; line-height: 1.8; font-weight: 500; }
+        .ai-content strong { background-color: var(--black); color: var(--white); padding: 2px 6px; border-radius: 4px; }
+        .ai-loading { display: none; margin-top: 15px; align-items: center; gap: 6px; }
+        .ai-loading.active { display: flex; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background-color: var(--black); animation: pulse 1.4s infinite ease-in-out both; }
         .dot:nth-child(1) { animation-delay: -0.32s; }
         .dot:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes pulse {
-            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
-            40% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Section Title */
+        @keyframes pulse { 0%, 80%, 100% { transform: scale(0); opacity: 0.3; } 40% { transform: scale(1); opacity: 1; } }
         .section-title {
-            color: var(--black);
-            font-size: 1.4rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            display: inline-block;
-            background: var(--white);
-            padding: 10px 15px;
-            border: 2px solid var(--black);
-            border-radius: var(--radius);
-            box-shadow: 3px 3px 0px var(--yellow);
+            color: var(--black); font-size: 1.4rem; font-weight: 800; margin-bottom: 1.5rem;
+            display: inline-block; background: var(--white); padding: 10px 15px;
+            border: 2px solid var(--black); border-radius: var(--radius); box-shadow: 3px 3px 0px var(--yellow);
         }
-
-        /* Knowledge Base Cards */
         .card {
-            background: var(--white);
-            border: 3px solid var(--black);
-            border-radius: var(--radius);
-            padding: 2rem;
-            box-shadow: var(--tech-shadow);
-            margin-bottom: 2rem;
-            transition: all 0.2s ease;
-            position: relative;
+            background: var(--white); border: 3px solid var(--black); border-radius: var(--radius);
+            padding: 2rem; box-shadow: var(--tech-shadow); margin-bottom: 2rem;
+            transition: all 0.2s ease; position: relative;
         }
-
         .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            right: 0;
-            width: 8px;
-            background-color: var(--yellow);
-            border-left: 2px solid var(--black);
-            border-radius: 0 5px 5px 0;
+            content: ''; position: absolute; top: 0; bottom: 0; right: 0; width: 8px;
+            background-color: var(--yellow); border-left: 2px solid var(--black); border-radius: 0 5px 5px 0;
         }
-
-        .card:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--tech-shadow-hover);
-        }
-
-        .card-title {
-            color: var(--black);
-            font-size: 1.25rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .card:hover { transform: translateY(-4px); box-shadow: var(--tech-shadow-hover); }
+        .card-title { color: var(--black); font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
         .card-body {
-            font-size: 1.05rem;
-            color: var(--black-soft);
-            white-space: pre-wrap;
-            margin-bottom: 1.5rem;
-            line-height: 1.8;
-            font-weight: 500;
-            padding-right: 10px;
-            direction: ltr; /* لضمان قراءة الأكواد الإنجليزية بشكل صحيح */
-            text-align: right;
+            font-size: 1.05rem; color: var(--black-soft); white-space: pre-wrap;
+            margin-bottom: 1.5rem; line-height: 1.8; font-weight: 500; padding-right: 10px;
+            direction: ltr; text-align: right;
         }
-
-        .card-body span.ar {
-            direction: rtl;
-            display: inline-block;
-        }
-
+        .card-body span.ar { direction: rtl; display: inline-block; }
         .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding-top: 1rem;
-            border-top: 2px dashed #ccc;
-            font-size: 0.9rem;
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 1rem; border-top: 2px dashed #ccc; font-size: 0.9rem;
         }
-
-        .source-text {
-            color: var(--black);
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tag {
-            background-color: var(--black);
-            color: var(--white);
-            padding: 0.4rem 1rem;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-
-        /* Empty State */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            background: var(--white);
-            border: 3px dashed var(--black);
-            border-radius: var(--radius);
-        }
-        
-        .empty-state h3 {
-            color: var(--black);
-            margin: 1rem 0 0.5rem 0;
-            font-weight: 800;
-        }
-
-        .empty-state p {
-            color: var(--black-soft);
-            font-weight: 500;
-        }
-
-        /* Online Search Section */
+        .source-text { color: var(--black); font-weight: 700; display: flex; align-items: center; gap: 6px; }
+        .tag { background-color: var(--black); color: var(--white); padding: 0.4rem 1rem; border-radius: 4px; font-size: 0.85rem; font-weight: 700; }
+        .empty-state { text-align: center; padding: 3rem 1rem; background: var(--white); border: 3px dashed var(--black); border-radius: var(--radius); }
+        .empty-state h3 { color: var(--black); margin: 1rem 0 0.5rem 0; font-weight: 800; }
+        .empty-state p { color: var(--black-soft); font-weight: 500; }
         .online-search {
-            text-align: center;
-            margin-top: 3rem;
-            padding: 2.5rem;
-            background: var(--white);
-            border: 3px solid var(--black);
-            border-radius: var(--radius);
-            box-shadow: var(--tech-shadow);
-            display: none;
+            text-align: center; margin-top: 3rem; padding: 2.5rem;
+            background: var(--white); border: 3px solid var(--black); border-radius: var(--radius);
+            box-shadow: var(--tech-shadow); display: none;
         }
-
-        .online-search h3 {
-            color: var(--black);
-            margin-bottom: 0.75rem;
-            font-size: 1.3rem;
-            font-weight: 800;
-        }
-
-        .online-search p {
-            color: var(--black-soft);
-            margin-bottom: 1.5rem;
-            font-weight: 500;
-        }
-
-        /* Responsive */
+        .online-search h3 { color: var(--black); margin-bottom: 0.75rem; font-size: 1.3rem; font-weight: 800; }
+        .online-search p { color: var(--black-soft); margin-bottom: 1.5rem; font-weight: 500; }
         @media (max-width: 768px) {
-            .input-group {
-                flex-direction: column;
-            }
-            .btn {
-                width: 100%;
-            }
-            .search-section {
-                padding: 2rem 1.5rem;
-            }
-            header h1 {
-                font-size: 1.7rem;
-            }
-            .card-footer {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
+            .input-group { flex-direction: column; }
+            .btn { width: 100%; }
+            .search-section { padding: 2rem 1.5rem; }
+            header h1 { font-size: 1.7rem; }
+            .card-footer { flex-direction: column; align-items: flex-start; gap: 12px; }
         }
     </style>
 </head>
@@ -478,65 +172,55 @@
 
     <header>
         <h1>المساعد الذكي للدعم الفني</h1>
-        <p>خاص بمسؤولي تقنية المعلومات بالمدراس </p>
+        <p>خاص بمسؤولي تقنية المعلومات بالمدارس</p>
     </header>
 
     <main>
-        <!-- قسم البحث -->
         <section class="search-section">
             <h2>كيف يمكنني مساعدتك اليوم؟</h2>
             <p>اكتب مشكلتك التقنية وسنقوم بالبحث في الأدلة الإجرائية وقاعدة بيانات الحلول المعتمدة</p>
-            
             <div class="input-group">
                 <div class="input-wrapper">
                     <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     <input type="text" id="searchInput" placeholder="مثال: القرص الصلب ممتلئ، مشكلة في الشبكة،..." aria-label="وصف المشكلة" autocomplete="off" maxlength="200">
                 </div>
-                <button class="btn btn-primary" id="searchBtn" onclick="handleSearch()">
-                    بحث
-                </button>
+                <button class="btn btn-primary" id="searchBtn" onclick="handleSearch()">بحث</button>
             </div>
             <div id="errorMsg"></div>
         </section>
 
-        <!-- حاوية النتائج -->
         <div id="resultsContainer" class="results-container">
-            
-            <!-- بطاقة الذكاء الاصطناعي -->
             <div id="aiCard" class="ai-box" style="display: none;">
                 <div class="ai-header">
                     <div class="ai-icon">✨</div>
                     <span>المساعد الذكي (AI)</span>
                 </div>
-                <div id="aiContent" class="ai-content">
-                    جاري تحليل المشكلة...
-                </div>
+                <div id="aiContent" class="ai-content">جاري تحليل المشكلة...</div>
                 <div id="aiLoading" class="ai-loading">
                     <span class="dot"></span>
                     <span class="dot"></span>
                     <span class="dot"></span>
                 </div>
             </div>
-
-            <!-- النتائج المحلية -->
             <h3 id="resultTitle" class="section-title" style="display: none;">الحلول المعتمدة</h3>
             <div id="kbResults"></div>
         </div>
 
-        <!-- البحث عبر الإنترنت -->
         <div id="onlineSearchSection" class="online-search">
             <h3>لم تجد الحل المناسب؟</h3>
             <p>يمكنك توسيع نطاق البحث عبر محرك Google للوصول إلى منتديات الدعم أو حلول إضافية.</p>
-            <button class="btn btn-secondary" id="onlineSearchBtn" onclick="searchOnline()">
-                🌐 البحث في الإنترنت
-            </button>
+            <button class="btn btn-secondary" id="onlineSearchBtn" onclick="searchOnline()">🌐 البحث في الإنترنت</button>
         </div>
     </main>
 
     <script>
-        // قاعدة المعرفة المحدثة بناءً على ملف Excel + الملفات السابقة
+        // ============================================================
+        // قاعدة المعرفة الموسعة
+        // المصادر: Soluation Store.xlsx + دليل الدعم الفني المدرسي (Word)
+        // ============================================================
         const knowledgeBase = [
-            // --- بيانات مستخرجة من Soluation Store.xlsx ---
+
+            // ========== بيانات Soluation Store الأصلية ==========
             {
                 keywords: ["قرص", "القرص c", "مساحة", "امتلاء", "drive c", "one drive", "storage"],
                 title: "مشكلة امتلاء القرص C",
@@ -663,8 +347,6 @@
                 solution: "Repair and install new images and needed software. Check laptop health and components.",
                 source: "Soluation Store"
             },
-
-            // --- بيانات إضافية من الأدلة السابقة ---
             {
                 keywords: ["ساعد", "saaed", "بلاغ", "تذكرة"],
                 title: "منصة ساعد - فتح بلاغ",
@@ -700,6 +382,206 @@
                 title: "نظام الموارد البشرية (HR)",
                 solution: "ثبت Java 8، وأضف الروابط في Security > Edit Site List.",
                 source: "HR & ERP Settings"
+            },
+
+            // ============================================================
+            // بيانات مستخرجة من دليل الدعم الفني المدرسي (Word)
+            // ============================================================
+
+            // ===== الفصل 3: استقبال البلاغات والدعم الفني =====
+            {
+                keywords: ["استقبال", "بلاغ", "تذكرة", "دعم فني", "help desk", "ticketing", "تصنيف"],
+                title: "استقبال البلاغات وتصنيف الأولوية (P1-P4)",
+                solution: "عند استلام بلاغ، اجمع: اسم مقدم البلاغ، القسم/الموقع، رقم/اسم الجهاز، وصف المشكلة، وقت الظهور، هل تؤثر على مستخدم واحد أم عدة مستخدمين؟، هل ظهرت رسالة خطأ؟، هل سبق إجراء تغيير؟\n\nتصنيف الأولوية:\n• P1 - حرجة: توقف خدمة رئيسية أو خطر أمني (توقف الشبكة الرئيسية، انتشار Ransomware).\n• P2 - عالية: تعطل خدمة مهمة لعدد من المستخدمين (توقف خادم الطباعة).\n• P3 - متوسطة: مشكلة تؤثر على مستخدم أو جهاز (تعطل حاسوب معلم).\n• P4 - منخفضة: طلب بسيط أو تحسين (تثبيت برنامج معتمد).",
+                source: "دليل الدعم الفني - الفصل 3"
+            },
+            {
+                keywords: ["منهجية", "تشخيص", "أعطال", "خطوات", "تسلسل", "حل مشكلة"],
+                title: "منهجية تشخيص الأعطال (10 خطوات)",
+                solution: "1. فهم المشكلة\n2. تحديد نطاق التأثير\n3. جمع المعلومات ورسائل الخطأ\n4. فحص التوصيلات والطاقة\n5. فحص إعدادات النظام والشبكة\n6. تحديد السبب المحتمل\n7. تطبيق حل آمن\n8. اختبار الخدمة بعد الإصلاح\n9. إبلاغ المستخدم بالنتيجة\n10. توثيق البلاغ وإغلاقه\n\nقاعدة مهمة: ابدأ دائمًا بالفحوصات البسيطة، ثم انتقل إلى الإجراءات الأكثر تقدمًا. لا تبدأ بتغيير الإعدادات عشوائيًا.",
+                source: "دليل الدعم الفني - الفصل 3"
+            },
+            {
+                keywords: ["مهام", "مسؤوليات", "يومية", "أسبوعية", "شهرية", "فني", "technician"],
+                title: "المهام اليومية والأسبوعية والشهرية لفني IT",
+                solution: "المهام اليومية: فحص أجهزة الحاسوب، التأكد من الإنترنت والشبكة، تشغيل الخوادم والخدمات، فحص الطابعات، متابعة كاميرات المراقبة، معالجة البلاغات، تثبيت البرامج المصرح بها، متابعة برامج الحماية، فحص الفصول الذكية، توثيق الأعطال.\n\nالمهام الأسبوعية: مراجعة سجلات الأعطال المتكررة، فحص النسخ الاحتياطي، تحديث برامج الحماية، فحص مساحة التخزين، مراجعة أجهزة الشبكة، فحص أجهزة UPS، مراجعة الأجهزة غير المستخدمة.\n\nالمهام الشهرية: تقرير بالأعطال، جرد الأجهزة، فحص صلاحيات المستخدمين، مراجعة التحديثات الأمنية، اختبار استعادة نسخة احتياطية، مراجعة الضمان والصيانة، تقييم أداء الشبكة.",
+                source: "دليل الدعم الفني - الفصل 2"
+            },
+
+            // ===== الفصل 4: أوامر Windows وPowerShell =====
+            {
+                keywords: ["ipconfig", "أوامر", "cmd", "network commands", "أوامر الشبكة", "ping", "tracert", "nslookup"],
+                title: "أوامر Windows الأساسية لفحص الشبكة",
+                solution: "• ipconfig - يعرض إعدادات IP الأساسية\n• ipconfig /all - تفاصيل الشبكة (IP, Subnet, Gateway, DNS, MAC, DHCP)\n• ipconfig /release ثم ipconfig /renew - تجديد عنوان IP\n• ipconfig /flushdns - تنظيف DNS Cache\n• ping 8.8.8.8 - اختبار اتصال IP\n• ping google.com - اختبار الاتصال وعمليات DNS\n• tracert google.com - تحديد مسار الحزم\n• nslookup google.com - اختبار تحليل أسماء النطاقات",
+                source: "دليل الدعم الفني - الفصل 4"
+            },
+            {
+                keywords: ["sfc", "scannow", "dism", "chkdsk", "فحص", "ملفات النظام", "أوامر"],
+                title: "فحص وإصلاح ملفات النظام (SFC / DISM / CHKDSK)",
+                solution: "افتح Command Prompt بصلاحية Administrator:\n\n• sfc /scannow - يفحص ملفات النظام المحمية ويصلح الملفات التالفة.\n• DISM /Online /Cleanup-Image /RestoreHealth - يفحص صورة Windows ويصلح مكونات النظام.\n• chkdsk C: /scan - فحص القرص بحثًا عن أخطاء دون طلب فحص غير متصل.",
+                source: "دليل الدعم الفني - الفصل 4"
+            },
+            {
+                keywords: ["powershell", "أوامر", "Get-NetAdapter", "Get-Service", "Get-Volume", "commands"],
+                title: "أوامر PowerShell المهمة لفني IT",
+                solution: "• Get-NetAdapter - عرض محولات الشبكة\n• Get-NetIPAddress - عرض عناوين IP\n• Get-Service - عرض الخدمات\n• Get-Volume - عرض الأقراص\n• Test-NetConnection 192.168.1.10 -Port 443 - اختبار منفذ شبكة\n• Get-Process - عرض العمليات\n• Get-ComputerInfo - عرض معلومات الجهاز\n• Restart-Service Spooler - إعادة تشغيل خدمة الطباعة",
+                source: "دليل الدعم الفني - الفصل 4"
+            },
+            {
+                keywords: ["hostname", "whoami", "systeminfo", "winver", "معلومات النظام"],
+                title: "أوامر معلومات النظام والمستخدم",
+                solution: "• hostname - عرض اسم الجهاز\n• whoami - عرض المستخدم الحالي\n• systeminfo - عرض معلومات النظام\n• winver - عرض إصدار Windows\n• taskmgr - فتح Task Manager\n• cleanmgr - أداة تنظيف القرص",
+                source: "دليل الدعم الفني - الفصل 4"
+            },
+
+            // ===== الفصل 5: إدارة الخوادم وWindows Server =====
+            {
+                keywords: ["domain", "دومين", "دخول", "تسجيل", "active directory", "ad", "مجال"],
+                title: "مشكلة عدم تسجيل الدخول إلى Domain",
+                solution: "الأعراض: رسالة تعذر الاتصال بالمجال، عدم القدرة على تسجيل الدخول بحساب Domain، بطء تسجيل الدخول.\n\nخطوات التشخيص:\n1. التأكد من اتصال الجهاز بالشبكة\n2. التأكد من عنوان IP\n3. فحص عنوان DNS\n4. اختبار الاتصال بالخادم (ping)\n5. التأكد من صحة الوقت والتاريخ\n6. فحص حالة حساب المستخدم والجهاز\n\nأوامر مساعدة: ipconfig /all ، ping 192.168.1.10 ، nslookup school.local",
+                source: "دليل الدعم الفني - الفصل 5"
+            },
+            {
+                keywords: ["group policy", "gpo", "سياسات", "gpresult", "gpupdate", "مجموعة"],
+                title: "مشاكل Group Policy (السياسات)",
+                solution: "لعرض السياسات المطبقة: gpresult /r\nلتحديث السياسات: gpupdate /force\n\nإذا لم تُطبق السياسة:\n1. تحقق من اتصال الجهاز بالمجال\n2. تحقق من عضوية الجهاز في OU الصحيحة\n3. افحص صلاحيات المستخدم والجهاز\n4. تحقق من DNS\n5. راجع سجلات Group Policy\n6. أعد تطبيق السياسة بعد تصحيح السبب",
+                source: "دليل الدعم الفني - الفصل 5"
+            },
+            {
+                keywords: ["خادم", "server", "مساحة", "low disk", "امتلاء", "تخزين"],
+                title: "مشكلة امتلاء مساحة الخادم (Server Disk Space)",
+                solution: "الأعراض: توقف بعض الخدمات، فشل حفظ الملفات، رسائل Low Disk Space.\n\nالحل:\n1. فحص الأقراص (Get-Volume)\n2. تحديد المجلدات الكبيرة\n3. مراجعة سجلات النظام (Event Viewer)\n4. مراجعة الملفات المؤقتة\n5. مراجعة سياسة الاحتفاظ بالنسخ الاحتياطية\n6. نقل أو حذف البيانات وفق سياسة المؤسسة\n7. زيادة مساحة التخزين عند الحاجة\n\n⚠ تحذير: لا تحذف ملفات قواعد البيانات أو ملفات النظام أو النسخ الاحتياطية عشوائيًا.",
+                source: "دليل الدعم الفني - الفصل 5"
+            },
+            {
+                keywords: ["dcdiag", "repadmin", "nltest", "active directory", "فحص ad", "domain controller"],
+                title: "فحص Active Directory وصحة المجال",
+                solution: "• dcdiag /v - يفحص جوانب متعددة من صحة Domain Controller\n• repadmin /replsummary - ملخص حالة النسخ المتماثل بين وحدات التحكم\n• repadmin /showrepl - تفاصيل عمليات النسخ المتماثل\n• nltest /dsgetdc:school.local - تحديد Domain Controller للمجال",
+                source: "دليل الدعم الفني - الفصل 5"
+            },
+
+            // ===== الفصل 6: إدارة الشبكات والإنترنت =====
+            {
+                keywords: ["انقطاع", "انترنت", "لا يوجد نت", "اتصال", "بوابة", "gateway", "ping", "dns"],
+                title: "مشكلة انقطاع الإنترنت - خطوات التشخيص",
+                solution: "1. التأكد من الكابل أو اتصال Wi-Fi\n2. فحص حالة محول الشبكة\n3. تنفيذ: ipconfig /all\n4. اختبار الاتصال بالبوابة: ping 192.168.1.1\n5. اختبار اتصال خارجي: ping 8.8.8.8\n6. اختبار DNS: nslookup google.com\n\nتفسير النتائج:\n• فشل الاتصال بالبوابة → مشكلة محلية أو VLAN أو كابل أو إعدادات\n• نجاح البوابة وفشل الاتصال الخارجي → مشكلة في الراوتر أو مزود الخدمة أو Firewall\n• نجاح الاتصال الخارجي وفشل أسماء المواقع → مشكلة DNS",
+                source: "دليل الدعم الفني - الفصل 6"
+            },
+            {
+                keywords: ["169.254", "limited connectivity", "dhcp", "لا يوجد ip", "عدم الحصول على ip"],
+                title: "مشكلة عدم الحصول على عنوان IP (DHCP)",
+                solution: "الأعراض: عنوان يبدأ بـ 169.254، رسالة Limited Connectivity، عدم القدرة على الوصول لموارد الشبكة.\n\nالحلول:\n1. ipconfig /release\n2. ipconfig /renew\n3. افحص DHCP Server\n4. نطاق العناوين Scope\n5. الكابل أو نقطة الاتصال\n6. إعدادات VLAN\n7. عدم وجود تعارض في عناوين IP",
+                source: "دليل الدعم الفني - الفصل 6"
+            },
+            {
+                keywords: ["تعارض", "ip conflict", "عنوان مكرر", "انقطاع متكرر"],
+                title: "مشكلة تعارض عناوين IP (IP Conflict)",
+                solution: "الأعراض: انقطاع متكرر، رسائل IP Conflict، عدم استقرار الاتصال.\n\nالحل:\n1. تحديد الأجهزة التي تستخدم العنوان\n2. مراجعة DHCP Reservations\n3. مراجعة العناوين الثابتة\n4. تعديل العنوان المتعارض وفق خطة IP\n5. توثيق التغيير",
+                source: "دليل الدعم الفني - الفصل 6"
+            },
+            {
+                keywords: ["wifi", "واي فاي", "لاسلكي", "ضعف إشارة", "access point", "ap"],
+                title: "مشكلة Wi-Fi (ضعف الإشارة / انقطاع)",
+                solution: "الأسباب المحتملة: ضعف الإشارة، ازدحام القنوات، عطل Access Point، مشكلة DHCP، كلمة مرور غير صحيحة، قيود في المصادقة.\n\nالحل:\n1. اختبار الاتصال بجهاز آخر\n2. الاقتراب من Access Point\n3. فحص عنوان IP\n4. فحص حالة نقطة الوصول\n5. مراجعة سجلات المصادقة\n6. مراجعة القنوات والتداخل\n7. التأكد من أن شبكة الضيوف منفصلة عن شبكة الموظفين",
+                source: "دليل الدعم الفني - الفصل 6"
+            },
+            {
+                keywords: ["vlan", "تقسيم شبكة", "شبكات منطقية", "switch", "router", "firewall"],
+                title: "مكونات الشبكة وVLAN",
+                solution: "مكونات الشبكة:\n• Router: ربط الشبكات وتوجيه البيانات\n• Switch: ربط الأجهزة داخل الشبكة\n• Firewall: التحكم في حركة المرور\n• Access Point: توفير الاتصال اللاسلكي\n• Patch Panel: تنظيم توصيلات الشبكة\n• Network Rack: تنظيم أجهزة الشبكة\n\nمثال VLAN:\n• VLAN 10: الإدارة\n• VLAN 20: المعلمون\n• VLAN 30: الطلاب\n• VLAN 40: كاميرات المراقبة\n• VLAN 50: الخوادم\nيجب ضبط المنافذ وواجهات Trunk وعمليات التوجيه وفق تصميم الشبكة المعتمد.",
+                source: "دليل الدعم الفني - الفصل 6"
+            },
+
+            // ===== الفصل 7: كاميرات المراقبة CCTV =====
+            {
+                keywords: ["كاميرا", "offline", "cctv", "nvr", "dvr", "poe", "مراقبة", "لا تعمل"],
+                title: "كاميرا CCTV لا تعمل (Offline)",
+                solution: "الأسباب المحتملة: انقطاع الكهرباء، تلف كابل الشبكة، تعطل منفذ PoE، عنوان IP غير صحيح، تعارض IP، مشكلة في الكاميرا نفسها.\n\nخطوات الحل:\n1. فحص لمبة الكاميرا\n2. فحص كابل الشبكة\n3. فحص منفذ PoE\n4. معرفة عنوان IP\n5. اختبار الاتصال: ping 192.168.1.50\n6. مراجعة إعدادات الكاميرا في NVR\n7. اختبار الكاميرا على منفذ معروف أنه يعمل\n8. استبدال الكابل أو الجهاز عند إثبات العطل",
+                source: "دليل الدعم الفني - الفصل 7"
+            },
+            {
+                keywords: ["تسجيل", "كاميرا", "لا يوجد تسجيل", "hdd", "nvr", "cctv"],
+                title: "الكاميرا تعمل ولكن لا يوجد تسجيل",
+                solution: "1. التأكد من وجود HDD\n2. فحص حالة القرص\n3. مراجعة مساحة التخزين\n4. فحص جدول التسجيل\n5. مراجعة إعدادات Motion Detection\n6. التأكد من صحة الوقت والتاريخ\n7. اختبار تشغيل تسجيل جديد\n8. التأكد من إمكانية تشغيل التسجيل السابق",
+                source: "دليل الدعم الفني - الفصل 7"
+            },
+            {
+                keywords: ["شاشة", "عرض", "كاميرا", "hdmi", "vga", "nvr", "لا تظهر صورة"],
+                title: "عدم ظهور صورة الكاميرات على الشاشة",
+                solution: "• فحص كابل HDMI أو VGA\n• اختيار مصدر العرض الصحيح\n• إعادة تشغيل شاشة العرض إذا كان ذلك آمنًا\n• فحص مخرج NVR\n• تجربة شاشة أخرى\n• التأكد من أن جهاز التسجيل يعمل",
+                source: "دليل الدعم الفني - الفصل 7"
+            },
+            {
+                keywords: ["أمن", "cctv", "كاميرات", "كلمات مرور", "حماية", "خصوصية"],
+                title: "قواعد أمن أنظمة CCTV",
+                solution: "• تغيير كلمات المرور الافتراضية\n• منع الوصول غير المصرح به\n• عدم تعريض الكاميرات مباشرة للإنترنت دون حماية مناسبة\n• فصل شبكة الكاميرات عن شبكة الطلاب\n• تحديث Firmware وفق إجراءات معتمدة\n• تقييد صلاحيات مشاهدة التسجيلات\n• الالتزام بسياسات الخصوصية والاحتفاظ بالتسجيلات",
+                source: "دليل الدعم الفني - الفصل 7"
+            },
+
+            // ===== الفصل 8: الطابعات والماسحات =====
+            {
+                keywords: ["طابعة", "offline", "printer", "لا تطبع", "متوقفة"],
+                title: "مشكلة Printer Offline (الطابعة غير متصلة)",
+                solution: "1. التأكد من تشغيل الطابعة\n2. فحص كابل USB أو الشبكة\n3. التأكد من عنوان IP\n4. التأكد من اختيار الطابعة الصحيحة\n5. التأكد من عدم تفعيل Use Printer Offline\n6. تجربة طباعة Test Page",
+                source: "دليل الدعم الفني - الفصل 8"
+            },
+            {
+                keywords: ["spooler", "قائمة الطباعة", "طباعة عالقة", "printer queue", "حذف مهام"],
+                title: "تنظيف قائمة الطباعة (Print Spooler)",
+                solution: "افتح Command Prompt بصلاحية Administrator:\n\nnet stop spooler\n\nبعد التأكد من عدم وجود مهام طباعة مهمة، احذف الملفات المؤقتة من:\nC:\\Windows\\System32\\spool\\PRINTERS\n\nثم:\nnet start spooler\n\nأو عبر PowerShell:\nRestart-Service Spooler",
+                source: "دليل الدعم الفني - الفصل 8"
+            },
+            {
+                keywords: ["جودة", "طباعة", "حبر", "تونر", "درام", "drum", "printer maintenance"],
+                title: "مشكلة جودة الطباعة",
+                solution: "• فحص مستوى الحبر أو التونر\n• فحص الأسطوانة Drum\n• تنظيف رأس الطباعة عند الحاجة\n• تشغيل أداة Printer Maintenance\n• التأكد من إعداد نوع الورق\n• تجربة الطباعة من جهاز آخر",
+                source: "دليل الدعم الفني - الفصل 8"
+            },
+            {
+                keywords: ["scanner", "ماسح", "مسح ضوئي", "scan"],
+                title: "مشكلة Scanner (الماسح الضوئي)",
+                solution: "• التأكد من تعريف الماسح\n• التأكد من توصيل USB أو الشبكة\n• اختبار المسح باستخدام برنامج الشركة\n• فحص إعدادات الحفظ\n• التأكد من صلاحيات مجلد الوجهة",
+                source: "دليل الدعم الفني - الفصل 8"
+            },
+
+            // ===== الفصل 9: أجهزة الحاسوب واللابتوب =====
+            {
+                keywords: ["لا يعمل", "جهاز", "لابتوب", "كمبيوتر", "power", "تشغيل", "شاشة سوداء"],
+                title: "الجهاز لا يعمل (No Power)",
+                solution: "1. فحص مصدر الكهرباء\n2. فحص كابل الطاقة\n3. فحص الشاحن\n4. التأكد من سلامة المقبس\n5. فحص لمبات الطاقة\n6. فحص الشاشة\n7. تجربة محول طاقة معروف بسلامته عند الحاجة\n\n⚠ تحذير: لا تفتح مزود الطاقة PSU؛ فقد يحتفظ بشحنة كهربائية خطرة.",
+                source: "دليل الدعم الفني - الفصل 9"
+            },
+            {
+                keywords: ["صورة", "شاشة", "display", "hdmi", "ram", "beep", "post"],
+                title: "الجهاز يعمل ولكن لا تظهر صورة",
+                solution: "• التأكد من تشغيل الشاشة\n• فحص كابل HDMI أو DisplayPort\n• اختيار Input الصحيح\n• تجربة شاشة أخرى\n• فحص RAM بواسطة فني مؤهل\n• مراجعة مؤشرات POST أو Beep Codes",
+                source: "دليل الدعم الفني - الفصل 9"
+            },
+            {
+                keywords: ["بطء", "slow", "جهاز", "task manager", "ram", "cpu", "disk", "startup"],
+                title: "بطء الجهاز - التشخيص والحل",
+                solution: "الأسباب المحتملة: امتلاء القرص، قلة RAM، كثرة برامج بدء التشغيل، برامج ضارة، ارتفاع الحرارة، مشكلة في القرص.\n\nالتشخيص:\n• افتح Task Manager (Ctrl + Shift + Esc)\n• افحص: CPU, Memory, Disk, Startup Apps\n\nأوامر إضافية: taskmgr, cleanmgr\n\n⚠ لا تحذف ملفات المستخدم أو ملفات النظام دون مراجعة.",
+                source: "دليل الدعم الفني - الفصل 9"
+            },
+            {
+                keywords: ["حرارة", "سخونة", "تهوية", "مراوح", "معجون حراري", "overheat"],
+                title: "ارتفاع درجة حرارة الجهاز",
+                solution: "• تنظيف فتحات التهوية\n• التأكد من عمل المراوح\n• وضع الجهاز على سطح مناسب\n• فحص الغبار\n• مراجعة المعجون الحراري بواسطة فني مؤهل\n• التأكد من عدم انسداد فتحات التبريد",
+                source: "دليل الدعم الفني - الفصل 9"
+            },
+            {
+                keywords: ["كيبورد", "فأرة", "لوحة مفاتيح", "mouse", "keyboard", "usb"],
+                title: "مشكلة لوحة المفاتيح أو الفأرة",
+                solution: "1. تجربة منفذ USB آخر\n2. تجربة جهاز آخر\n3. فحص البطارية للأجهزة اللاسلكية\n4. فحص Device Manager\n5. إعادة تثبيت التعريف عند الحاجة",
+                source: "دليل الدعم الفني - الفصل 9"
+            },
+
+            // ===== الفصل 10: أنظمة التشغيل والتعريفات =====
+            {
+                keywords: ["windows", "لا يقلع", "boot", "إقلاع", "نظام التشغيل", "تالف"],
+                title: "مشكلة Windows لا يقلع (Boot Failure)",
+                solution: "الأسباب المحتملة: ملفات نظام تالفة، تحديث فاشل، مشكلة في القرص، إعدادات Boot، تلف ملفات الإقلاع.\n\nخطوات مقترحة:\n• استخدام أداة Startup Repair\n• sfc /scannow و DISM من بيئة الإصلاح\n• فحص chkdsk\n• مراجعة إعدادات Boot في BIOS/UEFI\n• استعادة النظام من نقطة استعادة",
+                source: "دليل الدعم الفني - الفصل 10"
             }
         ];
 
@@ -733,22 +615,18 @@
             kbResults.innerHTML = '';
             resultTitle.style.display = 'inline-block';
 
-            // خوارزمية بحث مرنة (تجزئة الجملة للبحث عن الكلمات المفتاحية)
+            // خوارزمية بحث مرنة
             const queryWords = query.split(/\s+/);
             
             const matchedResults = knowledgeBase.filter(item => {
-                // التحقق مما إذا كانت أي كلمة مفتاحية موجودة في نص البحث
                 return item.keywords.some(kw => {
                     const keyword = kw.toLowerCase();
-                    // تطابق دقيق أو تطابق جزئي للكلمة المفتاحية
                     return query.includes(keyword) || queryWords.some(word => keyword.includes(word) && word.length > 2);
                 });
             });
 
-            // تشغيل المساعد الذكي
             simulateAI(query, matchedResults);
 
-            // عرض النتائج
             if (matchedResults.length > 0) {
                 matchedResults.forEach(item => {
                     const card = document.createElement('div');
@@ -761,16 +639,14 @@
                     const body = document.createElement('div');
                     body.className = 'card-body';
                     
-                    // تنسيق النص المختلط (عربي/إنجليزي)
                     const formattedSolution = item.solution.split('\n').map(line => {
-                        // إذا كان السطر يحتوي على حروف إنجليزية فقط، نضعه في span خاص
-                        if (/^[A-Za-z0-9\s.,\-/()]+$/.test(line)) {
+                        if (/^[A-Za-z0-9\s.,\-/()\[\]:;=+%#@!?&*<>{}|\\_~`^$'"]+$/.test(line)) {
                             return `<span class="ar">${line}</span>`;
                         }
                         return line;
                     }).join('\n');
                     
-                    body.innerHTML = formattedSolution; // آمن لأن البيانات ثابتة داخل الكود
+                    body.innerHTML = formattedSolution;
                     
                     const footer = document.createElement('div');
                     footer.className = 'card-footer';
@@ -798,7 +674,7 @@
                 emptyState.innerHTML = `
                     <svg fill="none" stroke="#000000" width="64" height="64" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <h3>لم نجد حلاً مطابقاً في قاعدة البيانات</h3>
-                    <p>جرب كلمات بحث أخرى (مثل: قرص، شبكة، طابعة، أوفيس) أو استخدم البحث في الإنترنت.</p>
+                    <p>جرب كلمات بحث أخرى (مثل: قرص، شبكة، طابعة، أوفيس، خادم، كاميرا) أو استخدم البحث في الإنترنت.</p>
                 `;
                 kbResults.appendChild(emptyState);
             }
@@ -824,10 +700,14 @@
                 if (matchedData.length > 0) {
                     responseHTML += `<p>لقد وجدت <strong>${matchedData.length}</strong> حلول مطابقة في قاعدة البيانات. يرجى مراجعة البطاقات أدناه للحصول على خطوات الحل التفصيلية.</p>`;
                     
-                    if (query.includes("شبكة") || query.includes("نت") || query.includes("ip")) {
-                        responseHTML += `<p><strong>💡 نصيحة:</strong> لمشاكل الشبكة، دائماً قم بتجربة <code>ipconfig /release</code> ثم <code>ipconfig /renew</code> قبل فتح تذكرة في 'ساعد'.</p>`;
-                    } else if (query.includes("طابعة") || query.includes("حبر")) {
-                        responseHTML += `<p><strong>💡 نصيحة:</strong> تأكد من ذكر رقم الأصل (Asset Tag) الخاص بالطابعة عند فتح تذكرة في ساعد لتسريع الصيانة.</p>`;
+                    if (query.includes("شبكة") || query.includes("نت") || query.includes("ip") || query.includes("انترنت")) {
+                        responseHTML += `<p><strong>💡 نصيحة:</strong> لمشاكل الشبكة، جرب دائمًا <code>ipconfig /release</code> ثم <code>ipconfig /renew</code> ثم <code>ipconfig /flushdns</code> قبل فتح تذكرة في 'ساعد'. استخدم <code>ping 8.8.8.8</code> و<code>ping google.com</code> لتحديد ما إذا كانت المشكلة محلية أم DNS.</p>`;
+                    } else if (query.includes("طابعة") || query.includes("حبر") || query.includes("printer")) {
+                        responseHTML += `<p><strong>💡 نصيحة:</strong> تأكد من ذكر رقم الأصل (Asset Tag) للطابعة عند فتح تذكرة في ساعد. إذا كانت الطابعة معلقة، نفذ <code>net stop spooler</code> ثم احذف الملفات من <code>C:\\Windows\\System32\\spool\\PRINTERS</code> ثم <code>net start spooler</code>.</p>`;
+                    } else if (query.includes("خادم") || query.includes("server") || query.includes("domain")) {
+                        responseHTML += `<p><strong>💡 نصيحة:</strong> لمشاكل Domain، تحقق أولاً من اتصال الجهاز بالشبكة، ثم عنوان IP، ثم DNS. استخدم <code>dcdiag /v</code> لفحص صحة الـ Domain Controller و<code>gpresult /r</code> لعرض السياسات المطبقة.</p>`;
+                    } else if (query.includes("كاميرا") || query.includes("cctv") || query.includes("nvr")) {
+                        responseHTML += `<p><strong>💡 نصيحة:</strong> لكاميرا Offline، ابدأ بفحص لمبة الكاميرا وكابل الشبكة ومنفذ PoE. استخدم <code>ping</code> للتأكد من عنوان IP. لا تعرّض الكاميرات مباشرة للإنترنت دون حماية.</p>`;
                     }
                 } else {
                     responseHTML += `<p>لم أجد حلاً مطابقاً تماماً في المستندات المحلية. قد تحتاج إلى تدخل بشري.</p>`;
@@ -835,7 +715,7 @@
                 }
                 
                 aiContent.innerHTML = responseHTML;
-            }, 1200); // تأخير بسيط ليحاكي التفكير
+            }, 1200);
         }
 
         // البحث في الإنترنت
@@ -843,7 +723,7 @@
             const query = sanitizeInput(document.getElementById('searchInput').value);
             if (!query) return;
             
-            const searchString = encodeURIComponent(`دعم فني ${query}`);
+            const searchString = encodeURIComponent(`دعم فني مدرسي ${query}`);
             const googleUrl = `https://www.google.com/search?q=${searchString}`;
             
             window.open(googleUrl, '_blank', 'noopener,noreferrer');
